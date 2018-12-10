@@ -1,0 +1,8 @@
+id: https://github.com/HSKA-IWI-VSYS/IWIbot
+runtimes:
+  - Cloud Foundry
+services:
+  - Discovery
+event_id: web
+event_organizer: dev-journeys
+language: python

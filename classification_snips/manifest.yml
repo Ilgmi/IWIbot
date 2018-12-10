@@ -1,0 +1,8 @@
+---
+applications:
+ - name: IWIBotSnips
+   host: IWIBotSnips
+   random-route: false
+   memory: 128M
+   services:
+     - cloudant_nosql_db
