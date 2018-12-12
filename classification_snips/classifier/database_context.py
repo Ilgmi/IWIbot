@@ -86,3 +86,6 @@ class DatabaseContext:
             self.save_trainings_data()
             success = True
         return success
+
+    def get_trainings_data(self):
+
