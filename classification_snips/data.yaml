@@ -1,0 +1,122 @@
+# greeting intent
+---
+type: intent
+name: greeting
+utterances:
+  - Servus
+  - Guten Tag
+  - Hallo
+  - Hi
+  - Hey
+
+# joke intent
+---
+type: intent
+name: joke
+utterances:
+  - Erzähl mir einen Witz
+  - Kannst du mir einen Witz erzählen?
+  - Wie wäre es mit einem Witz
+
+# meal intent
+---
+type: intent
+name: meal
+slots:
+  - name: meal_type
+    entity: Meals
+  - name: weekday
+    entity: Weekdays
+utterances:
+  - Was gibt es bei [meal_type] zu essen?
+  - Was gibt es in der Mensa zu essen?
+  - Welches essen gibt es bei der [meal_type] ?
+
+# notAtAll intent
+---
+type: intent
+name: notAtAll
+
+utterances:
+  - Garnicht
+
+# timetables intent
+---
+type: intent
+name: timetables
+slots:
+  - name: time
+    entity: weekdays
+utterances:
+  - Welche Vorlesungen habe ich [date:snips/datetime](heute)?
+  - Zeig mir meinen Stundenplan für [time]
+  - Was habe ich [date:snips/datetime](heute)?
+
+
+# weather intent
+---
+type: intent
+name: weather
+utterances:
+  - Wie ist das Wetter?
+  - Wie wird das Wetter heute?
+  - Wird das Wetter heute schön?
+  - Wie ist das Wetter draußen?
+  - Scheint draußen die Sonne?
+  - Brauche ich einen Regenschirm?
+  - Brauche ich einen Schirm?
+  - Wie kalt ist das Wetter draußen?
+  - Wie warm ist das Wetter draußen?
+  - Brauche ich draußen eine Jake?
+
+# who intent
+---
+type: intent
+name: who
+utterances:
+  - Wer bist du?
+
+
+# entities@meal entity
+---
+type: entity
+name: Meals
+automatically_extensible: no
+values:
+- [Wahlessen 1, Eins]
+- [Wahlessen 2, Zwei]
+- [Aktionstheke, Drei]
+- [Gut & Günstig, Gut und Günstig, Vier]
+- [Buffet, Fünf]
+- [Schnitzelbar, Sechs]
+
+# entities@timetables entity
+---
+type: entity
+name: weekdays
+automatically_extensible: no
+values:
+- [Montag]
+- [Dienstag]
+- [Mittwoch]
+- [Donnerstag]
+- [Freitag]
+- [Samstag]
+- [Sonntag]
+
+# entities@navigation entity
+---
+type: entity
+name: entities@navigation
+automatically_extensible: no
+values:
+- [Gebäude A, A, Aula, Bibliothek]
+- [Gebäude E, E Bau, E]
+- [Gebäude F, F Bau, F]
+- [LI Gebäude, LI Bau, LI]
+- [Gebäude M, M Bau, M]
+- [Gebäude P, P Bau, P]
+- [Gebäude R, R Bau, R]
+- [Cafeteria, Kaffee]
+- [haupteingang, Hochschuleingang, Wappen]
+- [Mensa, Mensa Moltke]
