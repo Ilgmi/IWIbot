@@ -1,3 +1,7 @@
-<p>
-  intent-list works!
-</p>
+<ul>
+  <li *ngFor="let intentKey of intents.getKeys()">
+    <label>{{intentKey}}</label>
+    <a [routerLink]="'intent/' + intentKey">Edit</a>
+    <button (click)="deleteIntent(itentkey)">Delete</button>
+  </li>
+</ul>

@@ -2,6 +2,7 @@ import {IntentSentence} from "./intent-sentence";
 import {Deserializable} from "../../interfaces/deserializable";
 
 export class Intent implements Deserializable<Intent>{
+
   public utterances: IntentSentence[] = [];
 
 

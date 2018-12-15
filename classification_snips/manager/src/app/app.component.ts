@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import {NluService} from "./services/nlu.service";
+import {NluService} from './services/nlu.service';
+import {isInstanceOf} from 'typedjson/js/typedjson/helpers';
+import {IntentTextWithEntity} from './model/intent/intent-text-with-entity';
+import {IntentText} from "./model/intent/intent-text";
+import {Intent} from "./model/intent/intent";
 
 @Component({
   selector: 'app-root',
@@ -9,9 +13,16 @@ import {NluService} from "./services/nlu.service";
 export class AppComponent {
   title = 'manager';
 
-  constructor(private nluService: NluService){}
+  constructor(private nluService: NluService) {}
+
+  t: Intent = null;
+
 
   testService() {
-    this.nluService.getIntents().subscribe( value => console.log(value));
+    this.nluService.intentService.getIntents().subscribe( value => {
+      this.t = value.getValues()[0];
+      const tmp = value.getValues()[0].utterances[0].data;
+    });
+
   }
 }

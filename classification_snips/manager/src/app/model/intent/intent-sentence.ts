@@ -1,9 +1,10 @@
 import {IntentText} from './intent-text';
 import {Deserializable} from '../../interfaces/deserializable';
 import {IntentTextWithEntity} from './intent-text-with-entity';
+import {IntentTextInterface} from "./intent-text-interface";
 
 export class IntentSentence implements Deserializable<IntentSentence> {
-  public data: IntentText[] = [];
+  public data: IntentTextInterface[] = [];
 
   deserialize(input: any): IntentSentence {
     Object.assign(this, input);

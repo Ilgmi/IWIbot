@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Intent} from "../../../model/intent/intent";
 
 @Component({
   selector: 'app-intent-edit',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IntentEditComponent implements OnInit {
 
+  @Input() key: string;
+  myKey = '';
+  @Input() intent: Intent;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  myLog(){
+    console.log(this.key);
   }
 
 }

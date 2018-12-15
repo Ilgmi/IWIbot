@@ -1,3 +1,11 @@
-<p>
-  intent-edit works!
-</p>
+<div>
+
+  <div class="form-group">
+    <label>Name</label>
+    <input class="form-control" placeholder="Name" [(ngModel)]="key">
+  </div>
+
+  <app-sentence-edit *ngFor="let s of intent.utterances" [sentence]="s"></app-sentence-edit>
+
+
+</div>

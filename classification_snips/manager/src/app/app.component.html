@@ -1,7 +1,10 @@
-<div>Header</div>
-<div>
-  <div>Sidenav</div>
-  <div>Main</div>
+<nav class="navbar fixed-top bg-dark navbar-dark shadow">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">NLU Manager</a>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <app-sidenav></app-sidenav>
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<div>Footer</div>
-<button (click)="testService()">Test</button>
+

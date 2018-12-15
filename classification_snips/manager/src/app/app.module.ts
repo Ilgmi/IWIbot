@@ -2,17 +2,28 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import {NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {HttpClientModule} from "@angular/common/http";
+import {NluManageModule} from "./nlu-manage/nlu-manage.module";
+import {FormsModule} from "@angular/forms";
+import { SidenavComponent } from './sidenave/sidenav.component';
+import {RouterModule, Routes} from "@angular/router";
+import { NotFoundComponent } from './not-found/not-found.component';
+import { AppRoutingModule } from './app-routing.module';
+
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SidenavComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
-    NoopAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    NluManageModule,
+    FormsModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,16 +1,17 @@
 import {IntentText} from './intent-text';
+import {IntentTextInterface} from "./intent-text-interface";
+import {Deserializable} from "../../interfaces/deserializable";
 
-export class IntentTextWithEntity extends IntentText{
+export class IntentTextWithEntity implements IntentTextInterface, Deserializable<IntentTextWithEntity>{
+  public text = '';
   public entity = '';
   public slot_name = '';
 
 
   constructor() {
-    super();
   }
 
   deserialize(input: any): IntentTextWithEntity {
-    super.deserialize(input);
     Object.assign(this, input);
     return this;
   }
