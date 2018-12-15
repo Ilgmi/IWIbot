@@ -10,7 +10,7 @@ import {Intent} from "../../../model/intent/intent";
 })
 export class IntentListComponent implements OnInit {
 
-  intents: DataContainer<Intent>;
+  intents: DataContainer<Intent> = null;
 
   constructor(private nluService: NluService) {
 

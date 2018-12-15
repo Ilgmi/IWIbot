@@ -1,7 +1,12 @@
-<ul>
-  <li *ngFor="let intentKey of intents.getKeys()">
-    <label>{{intentKey}}</label>
-    <a [routerLink]="'intent/' + intentKey">Edit</a>
-    <button (click)="deleteIntent(itentkey)">Delete</button>
-  </li>
-</ul>
+<div *ngIf="intents !== null">
+
+  <div class="card" *ngFor="let intentKey of intents.getKeys()">
+    <div class="card-header">
+      {{intentKey}}
+    </div>
+    <div class="card-body">
+      <a class="btn btn-primary" [routerLink]="'intent/' + intentKey">Edit</a>
+      <button class="btn btn-danger" (click)="deleteIntent(itentkey)">Delete</button>
+    </div>
+  </div>
+</div>
