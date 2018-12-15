@@ -1,0 +1,30 @@
+<div>
+  <button (click)="addText()">Add Text</button>
+  <button (click)="addTextWithEntity()">Add Text With Entity</button>
+</div>
+<ul>
+  <li *ngFor="let text of sentence.data">
+    <div *ngIf="isInstanceOf(text, IntentText)">
+      <div>
+        <label>Text</label>
+        <input type="text" [(ngModel)]="text.text">
+      </div>
+    </div>
+
+    <div *ngIf="isInstanceOf(text, IntentTextWithEntity)">
+      <div>
+        <label>Text</label>
+        <input type="text" [(ngModel)]="text.text">
+      </div>
+      <div>
+        <label>Entity</label>
+        <input type="text" [(ngModel)]="asIntentTextWithEntity(text).entity">
+      </div>
+      <div>
+        <label>Slot Name</label>
+        <input type="text" [(ngModel)]="asIntentTextWithEntity(text).slot_name">
+      </div>
+    </div>
+    <button (click)="delete(text)">Delete</button>
+  </li>
+</ul>
