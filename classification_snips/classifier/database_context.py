@@ -1,4 +1,5 @@
 from cloudant.document import Document
+import sys
 
 
 class DatabaseContext:
@@ -15,6 +16,8 @@ class DatabaseContext:
                 'entities': dict
             }}
             self.trainings_data = self.trainer_db.create_document(data)
+
+        self.log(self.trainer_db)
 
         if not Document(self.trainer_db, 'notFoundSentence').exists():
             self.trainer_db.create_document({'_id': 'notFoundSentence', 'sentences': []})
@@ -52,9 +55,15 @@ class DatabaseContext:
             success = True
         return success
 
+
+    def log(self, value):
+        print(value, file=sys.stderr)
+
+
     def get_intents(self):
         data = self.get_trainings_data()
-        return data['intents']
+        print(data, file=sys.stderr)
+        return ""
 
     def get_entities(self):
         data = self.get_trainings_data()
@@ -86,6 +95,3 @@ class DatabaseContext:
             self.save_trainings_data()
             success = True
         return success
-
-    def get_trainings_data(self):
-
