@@ -1,8 +1,8 @@
-<div>
+<div *ngIf="intent !== null && name !== null">
 
   <div class="form-group">
     <label>Name</label>
-    <input class="form-control" placeholder="Name" [(ngModel)]="key">
+    <input class="form-control" placeholder="Name" [(ngModel)]="name">
   </div>
 
   <app-sentence-edit *ngFor="let s of intent.utterances" [sentence]="s"></app-sentence-edit>

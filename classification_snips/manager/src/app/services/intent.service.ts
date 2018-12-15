@@ -10,20 +10,20 @@ import {map} from 'rxjs/operators';
 })
 export class IntentService {
 
-  private readonly apiUrl = '/api/intent/';
+  private readonly apiUrl = '/api/intent';
 
   constructor(private httpClient: HttpClient) { }
 
   public createIntent(key: string, intent: Intent) {
-    return this.httpClient.post(this.apiUrl + key, intent);
+    return this.httpClient.post(this.apiUrl + '/' + key, intent);
   }
 
   public updateIntent(key: string, intent: Intent) {
-    return this.httpClient.put(this.apiUrl + key, intent);
+    return this.httpClient.put(this.apiUrl + '/' + key, intent);
   }
 
   public getIntent(key: string): Observable<Intent> {
-    return this.httpClient.get<Intent>(this.apiUrl + key)
+    return this.httpClient.get<Intent>(this.apiUrl + '/' + key)
       .pipe(
         map( value => {
           return new Intent().deserialize(value);
@@ -32,11 +32,11 @@ export class IntentService {
   }
 
   public deleteIntent(key: string){
-    return this.httpClient.delete(this.apiUrl + key);
+    return this.httpClient.delete(this.apiUrl + '/' + key);
   }
 
   public getIntents(): Observable<DataContainer<Intent>> {
-    return this.httpClient.get<Intent[]>('/assets/mock-data/intents.json')
+    return this.httpClient.get(this.apiUrl)
       .pipe(
         map( value => {
           const result = new DataContainer<Intent>();

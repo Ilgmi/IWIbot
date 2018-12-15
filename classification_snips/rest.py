@@ -2,6 +2,7 @@
 import atexit
 import json
 import os
+import sys
 
 import cf_deployment_tracker
 import metrics_tracker_client
@@ -14,7 +15,6 @@ from classifier.trainer import Trainer
 from classifier.database_context import DatabaseContext
 from cloudant import Cloudant
 from flask import Flask, render_template, request, jsonify
-from classification_snips.classifier.database_context import DatabaseContext
 
 ###
 # Text Classification using Artificial Neural Networks (ANN)
@@ -58,24 +58,7 @@ elif os.path.isfile('vcap-local.json'):
         client.create_database('synapse', throw_on_exists=False)
 
 cache = dict()
-if client is not None:
-    populate_intents(client)
-    populate_entities_for_meal(client)
-    populate_entities_for_timetables(client)
-    populate_entities_for_navigation(client)
-    cache["intents"].load()
-    cache["entities@timetables"].load()
-    cache["entities@meal"].load()
 
-    classification = dict()
-    classification['intent'] = "Populated"
-    # create Classifier cache on startup
-    cache["intents"] = Classifier("intents", client)
-    cache["intents"].load()
-    cache["entities@timetables"] = Classifier("entities@timetables", client)
-    cache["entities@timetables"].load()
-    cache["entities@meal"] = Classifier("entities@meal", client)
-    cache["entities@meal"].load()
 
 # On Bluemix, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8000
@@ -99,6 +82,11 @@ def removekey(d, key):
 def home():
     return render_template('index.html')
 
+@app.route('/api/intent', methods=['GET'])
+def get_intents():
+    database_context = get_database_context()
+    print(database_context, file=sys.stderr)
+    return jsonify("intents")
 
 @app.route('/api/intent/<string:name>', methods=['POST'])
 def create_intent(name):
@@ -125,7 +113,7 @@ def create_entity(name):
 
 
 @app.route('/api/entity/<string:name>', methods=['PUT'])
-def update_intent(name):
+def update_entity(name):
     entity = request.json
     if len(name) > 0 and len(entity) > 0:
         return get_database_context().update_entity(name, entity)
@@ -151,7 +139,7 @@ def testIntent():
     if client is not None:
         if sentence == 'populate':
             # populate database with base data and train all neuronal netwroks
-            populate_intents(client)
+            populate_intentspopulate_intents(client)
             populate_entities_for_meal(client)
             populate_entities_for_timetables(client)
             populate_entities_for_navigation(client)

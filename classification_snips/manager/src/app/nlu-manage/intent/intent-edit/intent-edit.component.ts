@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Intent} from "../../../model/intent/intent";
+import {NluService} from "../../../services/nlu.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-intent-edit',
@@ -8,17 +10,18 @@ import {Intent} from "../../../model/intent/intent";
 })
 export class IntentEditComponent implements OnInit {
 
-  @Input() key: string;
-  myKey = '';
-  @Input() intent: Intent;
+  name: string = null;
+  intent: Intent = null;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute,
+              private nluService: NluService) { }
 
   ngOnInit() {
+    this.name = this.route.snapshot.paramMap.get('name');
+    this.nluService.intentService.getIntent(this.name).subscribe(
+      value => this.intent = value
+    );
   }
 
-  myLog(){
-    console.log(this.key);
-  }
 
 }
