@@ -15,6 +15,7 @@ export class IntentService {
   constructor(private httpClient: HttpClient) { }
 
   public createIntent(key: string, intent: Intent) {
+    console.log(key, intent);
     return this.httpClient.post(this.apiUrl + '/' + key, intent);
   }
 

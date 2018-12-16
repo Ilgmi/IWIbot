@@ -82,17 +82,27 @@ def removekey(d, key):
 def home():
     return render_template('index.html')
 
+@app.route('/api/intent/<string:name>', methods=['GET'])
+def get_intent(name):
+    intents = get_database_context().get_intents()
+    if name in intents:
+        return jsonify(intents[name]), 200
+    else:
+        return "Intent Not Found", 404
+
 @app.route('/api/intent', methods=['GET'])
 def get_intents():
     database_context = get_database_context()
     print(database_context, file=sys.stderr)
-    return jsonify("intents")
+    intents = database_context.get_intents()
+    return jsonify(intents)
 
 @app.route('/api/intent/<string:name>', methods=['POST'])
 def create_intent(name):
     intent = request.json
+    print(intent, file=sys.stderr)
     if len(name) > 0 and len(intent) > 0:
-        return get_database_context().create_intent(name, intent)
+        return jsonify(get_database_context().create_intent(name, intent)), 201
     return "Name:( " + name + " ): Or Intent:( " + intent + " ): Not set"
 
 
@@ -100,15 +110,27 @@ def create_intent(name):
 def update_intent(name):
     intent = request.json
     if len(name) > 0 and len(intent) > 0:
-        return get_database_context().update_intent(name, intent)
+        return jsonify(get_database_context().update_intent(name, intent)), 200
     return "Name:( " + name + " ): Or Intent:( " + intent + " ): Not set"
+
+@app.route('/api/intent/<string:name>', methods=['DELETE'])
+def delete_intent(name):
+    intents = get_database_context().get_intents()
+    if len(name) > 0 and name in intents:
+        success = get_database_context().delete_intent(name)
+        if success:
+            return jsonify(success), 200
+        else:
+            return jsonify(success), 400
+    else:
+        return jsonify(False), 404
 
 
 @app.route('/api/entity/<string:name>', methods=['POST'])
 def create_entity(name):
     entity = request.json
     if len(name) > 0 and len(entity) > 0:
-        return get_database_context().create_entity(name, entity)
+        return jsonify(get_database_context().create_entity(name, entity)), 201
     return "Name:( " + name + " ): Or entity:( " + entity + " ): Not set"
 
 
@@ -116,14 +138,14 @@ def create_entity(name):
 def update_entity(name):
     entity = request.json
     if len(name) > 0 and len(entity) > 0:
-        return get_database_context().update_entity(name, entity)
+        return jsonify(get_database_context().update_entity(name, entity)), 200
     return "Name:( " + name + " ): Or entity:( " + entity + " ): Not set"
 
 
 @app.route('/api/add/sentence/<string:sentence>', methods=['PUT'])
 def update_sentences(sentence):
     if len(sentence) > 0:
-        return get_database_context().add_not_found_sentence(sentence)
+        return jsonify(get_database_context().add_not_found_sentence(sentence)), 200
     return "NO SENTENCE FOUND"
 
 

@@ -10,13 +10,16 @@ import {Intent} from "../../../model/intent/intent";
 })
 export class IntentListComponent implements OnInit {
 
-  intents: DataContainer<Intent> = null;
+  public intents: DataContainer<Intent> = new DataContainer<Intent>();
 
   constructor(private nluService: NluService) {
 
+    this.intents = new DataContainer<Intent>();
     this.nluService.intentService.getIntents().subscribe(
       value => {
-        this.intents = value;
+        value.getKeys().forEach( key =>{
+          this.intents.setValue(key, value.getValue(key));
+        });
       }
     );
 
@@ -25,13 +28,32 @@ export class IntentListComponent implements OnInit {
   ngOnInit() {
   }
 
-
   deleteIntent(intentKey: string) {
     if(this.intents.keyExists(intentKey)){
       // Modal
 
       // Soll Gelöscht werden
-      this.nluService.intentService.deleteIntent(intentKey);
+      this.nluService.intentService.deleteIntent(intentKey).subscribe(
+        success => this.updateList()
+      );
+    }
+  }
+
+  private updateList(){
+    this.nluService.intentService.getIntents().subscribe(resultV => {
+      this.intents = resultV;
+    });
+  }
+
+  addNewIntent(value: string) {
+    console.log(value);
+    console.log((this.intents));
+    if(!this.intents.keyExists(value)){
+      this.nluService.intentService.createIntent(value, new Intent()).subscribe(
+        value1 => this.updateList(),
+        error1 => console.log(error1)
+      );
+
     }
   }
 }
