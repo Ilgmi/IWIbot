@@ -1,0 +1,410 @@
+{
+  "entities": {
+    "Meals": {
+      "automatically_extensible": false,
+      "data": [
+        {
+          "synonyms": [
+            "Eins"
+          ],
+          "value": "Wahlessen 1"
+        },
+        {
+          "synonyms": [
+            "Zwei"
+          ],
+          "value": "Wahlessen 2"
+        },
+        {
+          "synonyms": [
+            "Drei"
+          ],
+          "value": "Aktionstheke"
+        },
+        {
+          "synonyms": [
+            "Gut und G\u00fcnstig",
+            "Vier"
+          ],
+          "value": "Gut & G\u00fcnstig"
+        },
+        {
+          "synonyms": [
+            "F\u00fcnf"
+          ],
+          "value": "Buffet"
+        },
+        {
+          "synonyms": [
+            "Sechs"
+          ],
+          "value": "Schnitzelbar"
+        }
+      ],
+      "matching_strictness": 1.0,
+      "use_synonyms": true
+    },
+    "entities@navigation": {
+      "automatically_extensible": false,
+      "data": [
+        {
+          "synonyms": [
+            "A",
+            "Aula",
+            "Bibliothek"
+          ],
+          "value": "Geb\u00e4ude A"
+        },
+        {
+          "synonyms": [
+            "E Bau",
+            "E"
+          ],
+          "value": "Geb\u00e4ude E"
+        },
+        {
+          "synonyms": [
+            "F Bau",
+            "F"
+          ],
+          "value": "Geb\u00e4ude F"
+        },
+        {
+          "synonyms": [
+            "LI Bau",
+            "LI"
+          ],
+          "value": "LI Geb\u00e4ude"
+        },
+        {
+          "synonyms": [
+            "M Bau",
+            "M"
+          ],
+          "value": "Geb\u00e4ude M"
+        },
+        {
+          "synonyms": [
+            "P Bau",
+            "P"
+          ],
+          "value": "Geb\u00e4ude P"
+        },
+        {
+          "synonyms": [
+            "R Bau",
+            "R"
+          ],
+          "value": "Geb\u00e4ude R"
+        },
+        {
+          "synonyms": [
+            "Kaffee"
+          ],
+          "value": "Cafeteria"
+        },
+        {
+          "synonyms": [
+            "Hochschuleingang",
+            "Wappen"
+          ],
+          "value": "haupteingang"
+        },
+        {
+          "synonyms": [
+            "Mensa Moltke"
+          ],
+          "value": "Mensa"
+        }
+      ],
+      "matching_strictness": 1.0,
+      "use_synonyms": true
+    },
+    "snips/datetime": {},
+    "weekdays": {
+      "automatically_extensible": false,
+      "data": [
+        {
+          "synonyms": [],
+          "value": "Montag"
+        },
+        {
+          "synonyms": [],
+          "value": "Dienstag"
+        },
+        {
+          "synonyms": [],
+          "value": "Mittwoch"
+        },
+        {
+          "synonyms": [],
+          "value": "Donnerstag"
+        },
+        {
+          "synonyms": [],
+          "value": "Freitag"
+        },
+        {
+          "synonyms": [],
+          "value": "Samstag"
+        },
+        {
+          "synonyms": [],
+          "value": "Sonntag"
+        }
+      ],
+      "matching_strictness": 1.0,
+      "use_synonyms": true
+    }
+  },
+  "intents": {
+    "greeting": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Servus"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Guten Tag"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Hallo"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Hi"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Hey"
+            }
+          ]
+        }
+      ]
+    },
+    "joke": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Erz\u00e4hl mir einen Witz"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Kannst du mir einen Witz erz\u00e4hlen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wie w\u00e4re es mit einem Witz"
+            }
+          ]
+        }
+      ]
+    },
+    "meal": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Was gibt es bei "
+            },
+            {
+              "entity": "Meals",
+              "slot_name": "meal_type",
+              "text": "Wahlessen 1"
+            },
+            {
+              "text": " zu essen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Was gibt es in der Mensa zu essen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Welches essen gibt es bei der "
+            },
+            {
+              "entity": "Meals",
+              "slot_name": "meal_type",
+              "text": "Eins"
+            },
+            {
+              "text": " ?"
+            }
+          ]
+        }
+      ]
+    },
+    "notAtAll": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Garnicht"
+            }
+          ]
+        }
+      ]
+    },
+    "timetables": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Welche Vorlesungen habe ich "
+            },
+            {
+              "entity": "snips/datetime",
+              "slot_name": "date",
+              "text": "heute"
+            },
+            {
+              "text": "?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Zeig mir meinen Stundenplan f\u00fcr "
+            },
+            {
+              "entity": "weekdays",
+              "slot_name": "time",
+              "text": "Montag"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Was habe ich "
+            },
+            {
+              "entity": "snips/datetime",
+              "slot_name": "date",
+              "text": "heute"
+            },
+            {
+              "text": "?"
+            }
+          ]
+        }
+      ]
+    },
+    "weather": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Wie ist das Wetter?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wie wird das Wetter heute?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wird das Wetter heute sch\u00f6n?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wie ist das Wetter drau\u00dfen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Scheint drau\u00dfen die Sonne?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Brauche ich einen Regenschirm?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Brauche ich einen Schirm?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wie kalt ist das Wetter drau\u00dfen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Wie warm ist das Wetter drau\u00dfen?"
+            }
+          ]
+        },
+        {
+          "data": [
+            {
+              "text": "Brauche ich drau\u00dfen eine Jake?"
+            }
+          ]
+        }
+      ]
+    },
+    "who": {
+      "utterances": [
+        {
+          "data": [
+            {
+              "text": "Wer bist du?"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "language": "en"
+}

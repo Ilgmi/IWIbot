@@ -7,6 +7,16 @@ from cloudant.document import Document
 from nltk.stem.lancaster import LancasterStemmer
 
 
+#TODO: Trainer
+# Klasse um NLU zu trainieren
+# 1. Laden der Trainingsdaten
+# 2. NLU Trainieren
+# 3. NLU in nlu_new persistieren
+# 4. aktuelles nlu in nlu_old umbenen
+# 5. nlu_new in nlu umbenenen
+
+
+
 ###
 # Define ANN training
 ###

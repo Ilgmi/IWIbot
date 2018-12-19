@@ -26,7 +26,8 @@ class DatabaseContext:
 
     def save_doc(self, doc: Document, key, value):
         doc.fetch()
-        doc[key] = value
+        doc['key'] = key
+        doc['value'] = value
         doc.save()
 
     def get_doc(self, doc_id):
@@ -70,7 +71,7 @@ class DatabaseContext:
             return dict()
 
     def get_entities(self):
-        selector = dict([('type', dict([('$eq', 'entity')]))])
+        selector = {'type': {'$eq': 'entity'}}
         return self.get_docs_values(selector)
 
     def get_entity(self, name):
@@ -98,7 +99,7 @@ class DatabaseContext:
         return self.update_doc(self.intent_key + name, name, intent)
 
     def update_entity(self, name, entity):
-        return self.update_doc(self.intent_key + name, name, entity)
+        return self.update_doc(self.entity_key + name, name, entity)
 
     def delete_doc(self, key):
         if self.doc_exist(key):
