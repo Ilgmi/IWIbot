@@ -1,132 +1,116 @@
 from cloudant.document import Document
+from cloudant.database import CloudantDatabase
 import sys
 
 
 class DatabaseContext:
-
     trainings_data = dict()
+
+    entity_key = 'entity_'
+    intent_key = 'intent_'
 
     def __init__(self, client):
         self.client = client
         self.trainer_db = client["trainer"]
 
-        if Document(self.trainer_db, "training_data").exists():
-            trainer = Document(self.trainer_db, "training_data")
-            trainer.fetch()
-            self.trainings_data = trainer['training_data']
+    def doc_exist(self, key):
+        return Document(self.trainer_db, key).exists()
+
+    def create_doc(self, doc_id, key, value, data_type):
+        if not self.doc_exist(doc_id):
+            doc = dict([('_id', doc_id), ('key', key), ('value', value), ('type', data_type)])
+            self.trainer_db.create_document(doc)
+            return True
         else:
-            self.create_table()
+            return False
 
-        if not Document(self.trainer_db, 'notFoundSentence').exists():
-            self.trainer_db.create_document({'_id': 'notFoundSentence', 'sentences': []})
-
-    def create_table(self):
-        self.trainings_data = dict([
-            ('intents', dict()),
-            ('entities', dict())
-        ])
-        data = dict([('_id', 'training_data'), ('training_data', self.trainings_data
-                                       )])
-        # Create a document using the Database API
-        doc = self.trainer_db.create_document(data)
-        self.log(self.trainer_db)
+    def save_doc(self, doc: Document, key, value):
+        doc.fetch()
+        doc[key] = value
         doc.save()
 
+    def get_doc(self, doc_id):
+        return Document(self.trainer_db, doc_id)
 
     def add_not_found_sentence(self, sentence):
-        sentences = Document(self.trainer_db, 'notFoundSentence')
-        sentences['sentences'].append(sentence)
-        sentences.save()
+        doc = self.get_doc('sentences')
+        values = list(doc['sentences'])
+        values.append(sentence)
+        self.save_doc(doc, 'sentences', values)
 
     def get_sentences(self):
-        s = Document(self.trainer_db, 'notFoundSentence')
-        return s['sentences']
+        doc = self.get_doc('sentences')
+        return list(doc['sentences'])
 
-    def update_sentences(self, new_sentences):
-        sentences = Document(self.trainer_db, 'notFoundSentence')
-        sentences['sentences'] = new_sentences
-        sentences.save()
-
-    def set_trainings_data(self, data):
-        trainer = Document(self.trainer_db, "training_data")
-        trainer.fetch()
-        trainer['training_data'] = data
-        trainer.save()
-
-    def get_trainings_data(self):
-        return self.trainings_data
-
-    def save_trainings_data(self):
-        self.set_trainings_data(self.trainings_data)
+    def update_sentences(self, sentences):
+        doc = self.get_doc('sentences')
+        self.save_doc(doc, 'sentences', sentences)
 
     def log(self, value):
         print(value, file=sys.stderr)
 
+    def get_docs_values(self, selector):
+        result_list = dict()
+        docs = self.trainer_db.get_query_result(selector)
+        for doc in docs:
+            if 'key' in doc and 'value' in doc:
+                result_list[doc['key']] = doc['value']
+        self.log(docs)
+        return result_list
+
     def get_intents(self):
-        data = self.get_trainings_data()
-        self.log(data)
-        return data["intents"]
+        selector = {'type': {'$eq': 'intent'}}
+        return self.get_docs_values(selector)
 
     def get_intent(self, name):
-        intents = self.get_intents()
-        if name in intents:
-            return intents[name]
+        doc_id = self.intent_key + name
+        if self.doc_exist(doc_id):
+            return self.get_doc(doc_id)[name]
         else:
             return dict()
 
     def get_entities(self):
-        data = self.get_trainings_data()
-        return data['entities']
+        selector = dict([('type', dict([('$eq', 'entity')]))])
+        return self.get_docs_values(selector)
 
     def get_entity(self, name):
-        entities = self.get_entities()
-        if name in entities:
-            return entities[name]
+        doc_id = self.entity_key + name
+        if self.doc_exist(doc_id):
+            return self.get_doc(doc_id)[name]
         else:
             return dict()
 
     def create_entity(self, name, entity):
-        entities = self.get_entities()
-        success = False
-        if name not in entities:
-            entities[name] = entity
-            self.save_trainings_data()
-            success = True
-        return success
+        return self.create_doc(self.entity_key + name, name, entity, 'entity')
 
     def create_intent(self, name, intent):
-        intents = self.get_intents()
+        return self.create_doc(self.intent_key + name, name, intent, 'intent')
+
+    def update_doc(self, doc_id, key, value):
         success = False
-        if name not in intents:
-            intents[name] = intent
-            self.save_trainings_data()
+        if self.doc_exist(doc_id):
+            doc = self.get_doc(doc_id)
+            self.save_doc(doc, key, value)
             success = True
         return success
 
     def update_intent(self, name, intent):
-        intents = self.get_intents()
-        success = False
-        if name in intents:
-            intents[name] = intent
-            self.save_trainings_data()
-            success = True
-        return success
+        return self.update_doc(self.intent_key + name, name, intent)
 
     def update_entity(self, name, entity):
-        entities = self.get_entities()
-        success = False
-        if name in entities:
-            entities[name] = entity
-            self.save_trainings_data()
-            success = True
-        return success
+        return self.update_doc(self.intent_key + name, name, entity)
+
+    def delete_doc(self, key):
+        if self.doc_exist(key):
+            doc = self.get_doc(key)
+            doc.fetch()
+            doc.delete()
+            return True
+        else:
+            return False
 
     def delete_intent(self, name):
-        intents = self.get_intents()
-        success = False
-        self.log(intents)
-        if name in intents:
-            intents.pop(name)
-            self.save_trainings_data()
-            success = True
-        return success
+        return self.delete_doc(self.intent_key + name)
+
+    def delete_entity(self, name):
+        return self.delete_doc(self.entity_key + name)
