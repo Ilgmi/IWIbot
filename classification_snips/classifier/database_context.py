@@ -115,3 +115,14 @@ class DatabaseContext:
 
     def delete_entity(self, name):
         return self.delete_doc(self.entity_key + name)
+
+    def get_trainings_data(self):
+        intents = self.get_intents()
+        entities = self.get_entities()
+        data = {
+            'intents': intents,
+            'entities': entities,
+            'language': 'en'
+        }
+
+        return data
