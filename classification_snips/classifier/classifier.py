@@ -3,6 +3,17 @@ import numpy as np
 from nltk.stem.lancaster import LancasterStemmer
 
 
+#TODO: Classifier
+# 1. Init mit daten aus nlu_data -> nlu
+# 2. Falls nicht vorhanden --> nlu_data -> nlu_old
+# 3. Methode um Intent auszulesen
+# 4. Methode um Entity auszulesen
+# 5. Wird eine Intent nicht erkannt, wird er über eine Methode
+#    in die Dataenbank mit aufgenommen um die sie gegebenen falls hinzuzufügen
+#    Dies wird im Rest hinzugefügt.
+
+
+
 # compute sigmoid nonlinearity
 def sigmoid(x):
     output = 1 / (1 + np.exp(-x))

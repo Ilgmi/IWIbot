@@ -20,6 +20,7 @@ export class IntentService {
   }
 
   public updateIntent(key: string, intent: Intent) {
+    console.log(key, intent);
     return this.httpClient.put(this.apiUrl + '/' + key, intent);
   }
 

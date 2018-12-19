@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Intent} from "../../../model/intent/intent";
-import {NluService} from "../../../services/nlu.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {IntentSentence} from "../../../model/intent/intent-sentence";
+import {Intent} from '../../../model/intent/intent';
+import {NluService} from '../../../services/nlu.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {IntentSentence} from '../../../model/intent/intent-sentence';
 
 @Component({
   selector: 'app-intent-edit',
@@ -30,7 +30,7 @@ export class IntentEditComponent implements OnInit {
     );
   }
 
-  public updateName(){
+  public updateName() {
     this.nluService.intentService.createIntent(this.name, this.intent).subscribe(
       value => this.nluService.intentService.deleteIntent(this.oldName).subscribe(
         value1 => this.router.navigate(['/intent/', this.name])
@@ -38,8 +38,22 @@ export class IntentEditComponent implements OnInit {
     );
   }
 
-  public save(){
-    this.nluService.intentService.updateIntent(this.name, this.intent);
+  private prepareSentences() {
+    this.intent.utterances.forEach( sentence => {
+      sentence.data.forEach( (item, index, s) => {
+        if (index === 0) {
+
+        } else if ((index === s.length - 1)) {
+
+        } else {
+
+        }
+      });
+    });
+  }
+
+  public save() {
+    this.nluService.intentService.updateIntent(this.name, this.intent).subscribe();
   }
 
   addSentence() {

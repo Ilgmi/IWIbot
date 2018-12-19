@@ -1,0 +1,16 @@
+{
+  "parsers_metadata": [
+    {
+      "entity_identifier": "meal",
+      "entity_parser": "parser_1"
+    },
+    {
+      "entity_identifier": "navigation",
+      "entity_parser": "parser_2"
+    },
+    {
+      "entity_identifier": "timetables",
+      "entity_parser": "parser_3"
+    }
+  ]
+}

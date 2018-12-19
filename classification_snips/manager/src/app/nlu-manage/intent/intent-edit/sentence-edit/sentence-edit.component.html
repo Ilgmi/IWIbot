@@ -1,28 +1,33 @@
-<div>
-  <button (click)="addText()">Add Text</button>
-  <button (click)="addTextWithEntity()">Add Text With Entity</button>
+
+<div class="form-group">
+  <label>Sentence</label>
+  <input type="text" class="form-control" [value]="this.trainingSentence">
+</div>
+<div class="form-group">
+  <button (click)="addText()" class="btn btn-primary">Add Text</button>
+  <button (click)="addTextWithEntity()" class="btn btn-primary">Add Text With Entity</button>
 </div>
 <ul>
   <li *ngFor="let text of sentence.data">
     <div *ngIf="isInstanceOf(text, IntentText)">
-      <div>
+      <div class="form-group">
         <label>Text</label>
-        <input type="text" [(ngModel)]="text.text">
+        <input class="form-control" type="text" [(ngModel)]="text.text">
       </div>
     </div>
 
     <div *ngIf="isInstanceOf(text, IntentTextWithEntity)">
-      <div>
+      <div class="form-group">
         <label>Text</label>
-        <input type="text" [(ngModel)]="text.text">
+        <input class="form-control" type="text" [(ngModel)]="text.text">
       </div>
-      <div>
+      <div class="form-group">
         <label>Entity</label>
-        <input type="text" [(ngModel)]="asIntentTextWithEntity(text).entity">
+        <input class="form-control" type="text" [(ngModel)]="asIntentTextWithEntity(text).entity">
       </div>
-      <div>
+      <div class="form-group">
         <label>Slot Name</label>
-        <input type="text" [(ngModel)]="asIntentTextWithEntity(text).slot_name">
+        <input class="form-control" type="text" [(ngModel)]="asIntentTextWithEntity(text).slot_name">
       </div>
     </div>
     <button (click)="delete(text)">Delete</button>

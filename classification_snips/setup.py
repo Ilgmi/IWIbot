@@ -7,6 +7,7 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+import os
 
 here = path.abspath(path.dirname(__file__))
 
@@ -22,3 +23,6 @@ setup(
     url='https://github.com/HSKA-IWI-VSYS/IWIbot',
     license='Apache-2.0'
 )
+
+os.system("snips-nlu download de")
+os.system("snips-nlu download en")

@@ -14,7 +14,9 @@ from nltk.stem.lancaster import LancasterStemmer
 # 3. NLU in nlu_new persistieren
 # 4. aktuelles nlu in nlu_old umbenen
 # 5. nlu_new in nlu umbenenen
-
+# Es soll immer eine alte Version zum RoleBack da sein.
+# Methode für einen RoleBack sein.
+# Methode um zu Trainieren --> Parameter DatabaseContext um daten zu holen
 
 
 ###

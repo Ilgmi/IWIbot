@@ -1,0 +1,122 @@
+{
+  "config": {
+    "max_pattern_length": 1000,
+    "max_queries": 100,
+    "unit_name": "deterministic_intent_parser"
+  },
+  "group_names_to_slot_names": {},
+  "language_code": "en",
+  "patterns": {
+    "greeting": [
+      "^\\s*hello\\s*good\\s*morning\\s*$",
+      "^\\s*Hi\\s*$",
+      "^\\s*Gr\u00fc\u00dfe\\s*$",
+      "^\\s*Bonjour\\s*$",
+      "^\\s*Guten\\s*Morgen\\s*$",
+      "^\\s*Hey\\s*$",
+      "^\\s*Good\\s*day\\s*$",
+      "^\\s*Hello\\s*$",
+      "^\\s*Guten\\s*Abend\\s*$",
+      "^\\s*Servus\\s*$",
+      "^\\s*hello\\s*good\\s*evening\\s*$",
+      "^\\s*Moin\\s*$",
+      "^\\s*Guten\\s*Tag\\s*$",
+      "^\\s*Good\\s*evening\\s*$",
+      "^\\s*Gr\u00fc\u00df\\s*Gott\\s*$",
+      "^\\s*Hallo\\s*$",
+      "^\\s*Good\\s*morning\\s*$",
+      "^\\s*Ave\\s*$"
+    ],
+    "joke": [
+      "^\\s*Fun\\s*$",
+      "^\\s*Kannst\\s*du\\s*mir\\s*einen\\s*Witz\\s*erz\u00e4hlen\\s*\\?\\s*$",
+      "^\\s*Funny\\s*$",
+      "^\\s*Bring\\s*mich\\s*zum\\s*Lachen\\s*$",
+      "^\\s*Tell\\s*me\\s*something\\s*funny\\s*$",
+      "^\\s*Erz\u00e4hl\\s*mir\\s*etwas\\s*lustiges\\s*$",
+      "^\\s*Unterhalte\\s*mich\\s*$",
+      "^\\s*Lachen\\s*$",
+      "^\\s*Laugh\\s*$",
+      "^\\s*Tell\\s*me\\s*a\\s*joke\\s*$",
+      "^\\s*Erz\u00e4hl\\s*mir\\s*etwas\\s*witziges\\s*$",
+      "^\\s*Erz\u00e4hl\\s*mir\\s*einen\\s*Witz\\s*$",
+      "^\\s*Can\\s*you\\s*tell\\s*me\\s*a\\s*joke\\s*\\?\\s*$",
+      "^\\s*Joke\\s*$",
+      "^\\s*Witz\\s*$"
+    ],
+    "meal": [
+      "^\\s*Aktionstheke\\s*$",
+      "^\\s*Was\\s*gibt\\s*es\\s*in\\s*der\\s*Mensa\\s*$",
+      "^\\s*Essen\\s*$",
+      "^\\s*Lunch\\s*$",
+      "^\\s*Eating\\s*$",
+      "^\\s*Mensa\\s*$",
+      "^\\s*Schnitzelbar\\s*$",
+      "^\\s*Food\\s*$",
+      "^\\s*Dinner\\s*$",
+      "^\\s*Ich\\s*habe\\s*Hunger\\s*$",
+      "^\\s*Buffet\\s*$",
+      "^\\s*Was\\s*gibt\\s*es\\s*zu\\s*Essen\\s*$",
+      "^\\s*Meal\\s*$",
+      "^\\s*Wahlessen\\s*$",
+      "^\\s*Gut\\s*\\&\\s*G\u00fcnstig\\s*$"
+    ],
+    "navigation": [
+      "^\\s*Way\\s*$",
+      "^\\s*Show\\s*me\\s*the\\s*Way\\s*$",
+      "^\\s*Route\\s*$",
+      "^\\s*Navigation\\s*$",
+      "^\\s*Navigate\\s*$",
+      "^\\s*Weg\\s*$",
+      "^\\s*Navigiere\\s*$",
+      "^\\s*Do\\s*you\\s*know\\s*da\\s*way\\s*\\?\\s*$"
+    ],
+    "notAtAll": [
+      "^\\s*Not\\s*at\\s*all\\s*$",
+      "^\\s*Garnicht\\s*$"
+    ],
+    "timetables": [
+      "^\\s*Timetable\\s*$",
+      "^\\s*What\\s*s\\s*on\\s*my\\s*schedule\\s*\\?\\s*$",
+      "^\\s*Show\\s*me\\s*my\\s*schedule\\s*$",
+      "^\\s*Give\\s*me\\s*my\\s*timetable\\s*$",
+      "^\\s*Was\\s*habe\\s*ich\\s*heute\\s*\\?\\s*$",
+      "^\\s*Stundenplan\\s*$",
+      "^\\s*Zeig\\s*mir\\s*meinen\\s*Stundenplan\\s*$",
+      "^\\s*Welche\\s*Vorlesung\\s*hab\\s*ich\\s*heute\\s*\\?\\s*$",
+      "^\\s*Time\\s*table\\s*$",
+      "^\\s*Wie\\s*sieht\\s*mein\\s*Tag\\s*aus\\s*\\?\\s*$",
+      "^\\s*Lecture\\s*$",
+      "^\\s*What\\s*lecture\\s*do\\s*i\\s*have\\s*today\\s*\\?\\s*$",
+      "^\\s*Tell\\s*me\\s*about\\s*my\\s*day\\s*$"
+    ],
+    "weather": [
+      "^\\s*weather\\s*$",
+      "^\\s*Regnet\\s*es\\s*\\?\\s*$",
+      "^\\s*Wie\\s*warm\\s*ist\\s*es\\s*drau\u00dfen\\s*\\?\\s*$",
+      "^\\s*Wie\\s*wird\\s*das\\s*Wetter\\s*heute\\s*\\?\\s*$",
+      "^\\s*Scheint\\s*die\\s*Sonne\\s*\\?\\s*$",
+      "^\\s*Wird\\s*es\\s*heute\\s*sch\u00f6n\\s*\\?\\s*$",
+      "^\\s*Brauche\\s*ich\\s*einen\\s*Regenschirm\\s*\\?\\s*$",
+      "^\\s*Brauche\\s*ich\\s*einen\\s*Schirm\\s*\\?\\s*$",
+      "^\\s*Wie\\s*kalt\\s*ist\\s*es\\s*drau\u00dfen\\s*\\?\\s*$",
+      "^\\s*Wie\\s*ist\\s*das\\s*Wetter\\s*\\?\\s*$",
+      "^\\s*Wie\\s*ist\\s*es\\s*drau\u00dfen\\s*$",
+      "^\\s*Brauche\\s*ich\\s*eine\\s*Jacke\\s*\\?\\s*$"
+    ],
+    "who": [
+      "^\\s*Wer\\s*bist\\s*du\\s*\\?\\s*$",
+      "^\\s*Who\\s*are\\s*you\\s*\\?\\s*$"
+    ]
+  },
+  "slot_names_to_entities": {
+    "greeting": {},
+    "joke": {},
+    "meal": {},
+    "navigation": {},
+    "notAtAll": {},
+    "timetables": {},
+    "weather": {},
+    "who": {}
+  }
+}
