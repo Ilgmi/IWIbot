@@ -2,15 +2,17 @@
   <div class="col">
     <div class="custom-file">
       <input (change)="useFile($event.target.files)" type="file" class="custom-file-input" id="json-file" accept="application/json">
-      <label class="custom-file-label" for="json-file">Snips Json File</label>
+      <label class="custom-file-label" for="json-file">{{label}}</label>
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row mt-2">
   <div class="col">
-    <button class="btn btn-primary" [disabled]="hasValidJson">Replace current Data</button>
+    <button class="btn btn-primary" (click)="replaceData()" [disabled]="!hasValidJson">Replace current Data</button>
   </div>
+</div>
+<div class="row mt-2">
   <div class="col">
-    <button class="btn btn-primary" [disabled]="hasValidJson">Add to current data</button>
+    <button class="btn btn-primary" (click)="addData()" [disabled]="!hasValidJson">Add to current data</button>
   </div>
 </div>
