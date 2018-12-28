@@ -141,6 +141,20 @@ def update_entity(name):
         return jsonify(get_database_context().update_entity(name, entity)), 200
     return "Name:( " + name + " ): Or entity:( " + entity + " ): Not set"
 
+@app.route('/api/entity/<string:name>', methods=['GET'])
+def get_entity(name):
+    entities = get_database_context().get_entities()
+    if name in entities:
+        return jsonify(entities[name]), 200
+    else:
+        return "Intent Not Found", 404
+
+@app.route('/api/entity', methods=['GET'])
+def get_entities():
+    database_context = get_database_context()
+    print(database_context, file=sys.stderr)
+    entities = database_context.get_entities()
+    return jsonify(entities)
 
 @app.route('/api/add/sentence/<string:sentence>', methods=['PUT'])
 def update_sentences(sentence):

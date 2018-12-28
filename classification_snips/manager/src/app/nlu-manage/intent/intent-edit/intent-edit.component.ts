@@ -11,14 +11,18 @@ import {IntentSentence} from '../../../model/intent/intent-sentence';
 })
 export class IntentEditComponent implements OnInit {
 
-  oldName: string;
-  name: string = null;
-  intent: Intent = null;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private nluService: NluService) { }
 
+  oldName: string;
+  name: string = null;
+
+  intent: Intent = null;
+  intentCopy: Intent = null;
+
+  private function;
   ngOnInit() {
     this.name = this.route.snapshot.paramMap.get('name');
     this.oldName = this.name;
@@ -26,7 +30,12 @@ export class IntentEditComponent implements OnInit {
       return false;
     };
     this.nluService.intentService.getIntent(this.name).subscribe(
-      value => this.intent = value
+      value => {
+        this.intent = value;
+        this.intentCopy = <Intent>this.deepCopy(value);
+        console.log(this.intentCopy);
+        console.log(this.intent);
+      }
     );
   }
 
@@ -58,5 +67,39 @@ export class IntentEditComponent implements OnInit {
 
   addSentence() {
     this.intent.utterances.push(new IntentSentence());
+  }
+
+  private deepCopy(obj) {
+    let copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || 'object' !== typeof obj) { return obj; }
+
+    // Handle Date
+    if (obj instanceof Date) {
+      copy = new Date();
+      copy.setTime(obj.getTime());
+      return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+      copy = [];
+      for (let i = 0, len = obj.length; i < len; i++) {
+        copy[i] = this.deepCopy(obj[i]);
+      }
+      return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+      copy = {};
+      for (const attr in obj) {
+        if (obj.hasOwnProperty(attr)) { copy[attr] = this.deepCopy(obj[attr]); }
+      }
+      return copy;
+    }
+
+    throw new Error('Unable to copy obj! Its type isn\'t supported.');
   }
 }

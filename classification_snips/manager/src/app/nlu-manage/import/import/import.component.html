@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col">
+    <div class="custom-file">
+      <input (change)="useFile($event)" type="file" class="custom-file-input" id="json-file" accept="application/json">
+      <label class="custom-file-label" for="json-file">Snips Json File</label>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <button class="btn btn-primary" [disabled]="hasValidJson">Replace current Data</button>
+  </div>
+  <div class="col">
+    <button class="btn btn-primary" [disabled]="hasValidJson">Add to current data</button>
+  </div>
+</div>

@@ -14,6 +14,7 @@ export class SentenceEditComponent implements OnInit {
   @Input() sentence: IntentSentence;
 
   public trainingSentence = '';
+  public oldSentence = '';
 
   // entities laden
   entities = [];
@@ -24,7 +25,10 @@ export class SentenceEditComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.sentence.data.forEach( item => this.trainingSentence += item.text);
+    this.sentence.data.forEach( item => {
+      this.trainingSentence += item.text;
+      this.oldSentence += item.text;
+    });
   }
 
   isInstanceOf(object, type: Type<any>) {
@@ -56,8 +60,14 @@ export class SentenceEditComponent implements OnInit {
     }
   }
 
-  public createSentence(text: string){
-
+  public intentSentenceChanged(){
+    this.sentence.data.forEach( item => {
+      this.trainingSentence += item.text;
+      this.oldSentence += item.text;
+    });
   }
 
+  public sentenceChanged(sentence: string) {
+
+  }
 }

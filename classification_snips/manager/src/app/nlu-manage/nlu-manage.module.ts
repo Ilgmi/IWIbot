@@ -10,6 +10,7 @@ import { SentenceEditComponent } from './intent/intent-edit/sentence-edit/senten
 import {FormsModule} from "@angular/forms";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { HomeComponent } from './home/home.component';
+import { ImportComponent } from './import/import/import.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { HomeComponent } from './home/home.component';
     IntentListComponent,
     IntentEditComponent,
     SentenceEditComponent,
-    HomeComponent
+    HomeComponent,
+    ImportComponent
   ],
   exports: [
     IntentEditComponent,

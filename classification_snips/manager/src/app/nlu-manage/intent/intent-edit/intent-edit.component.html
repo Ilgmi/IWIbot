@@ -4,7 +4,7 @@
   <div class="form-group">
     <label>Name</label>
     <input class="form-control" placeholder="Name" [(ngModel)]="name">
-    <button class="btn btn-warning" (click)="updateName()">Update Name</button>
+    <button [disabled]="name === oldName" class="btn btn-warning mt-2" (click)="updateName()">Update Name</button>
   </div>
 
   <button (click)="addSentence()" class="btn btn-success">Add</button>
