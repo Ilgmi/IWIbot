@@ -16,10 +16,20 @@ export class ImportComponent implements OnInit {
   ngOnInit() {
   }
 
-  useFile(files: File[]) {
+
+  private checkJson(content){
+    // TODO: Check content for valid Objects
+  }
+
+  public useFile(files: File[]) {
+    console.log(files);
     if(files.length > 0){
       const file = files[0];
-      
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        this.checkJson(JSON.parse(<string>fileReader.result));
+      };
+      fileReader.readAsText(file);
     }
   }
 }
