@@ -7,18 +7,6 @@ from cloudant.document import Document
 from nltk.stem.lancaster import LancasterStemmer
 
 
-#TODO: Trainer
-# Klasse um NLU zu trainieren
-# 1. Laden der Trainingsdaten
-# 2. NLU Trainieren
-# 3. NLU in nlu_new persistieren
-# 4. aktuelles nlu in nlu_old umbenen
-# 5. nlu_new in nlu umbenenen
-# Es soll immer eine alte Version zum RoleBack da sein.
-# Methode für einen RoleBack sein.
-# Methode um zu Trainieren --> Parameter DatabaseContext um daten zu holen
-
-
 ###
 # Define ANN training
 ###
@@ -163,6 +151,10 @@ class Trainer:
         if Document(self.trainer_db, self.context).exists():
             trainer = self.trainer_db[self.context]
             self.training_data = list(trainer['training_data'])
+
+#TODO: Classifier
+# 1. Init mit daten aus nlu_data -> nlu
+# 2. Falls nicht vorhanden --> nlu_data -> n    self.training_data = list(trainer['training_data'])
         else:
             self.training_data = list()
             data = dict([('_id', self.context), ('context', self.context),
@@ -270,6 +262,9 @@ class Trainer:
             output_row = list(output_empty)
             output_row[self.classes.index(self.doc[1])] = 1
             output.append(output_row)
+#TODO: Classifier
+# 1. Init mit daten aus nlu_data -> nlu
+# 2. Falls nicht vorhanden --> nlu_data -> nend(output_row)
 
         # sample training/output
         i = 0
