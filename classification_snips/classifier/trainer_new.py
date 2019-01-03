@@ -30,6 +30,7 @@ class SnipsNluTrainer:
         self.nlu_engine.fit(self._load_training_data())
 
     def _persist_nlu(self):
+        # TODO: Es gibt eine Methode um die SnipsNLU zu sichern.....
         engine_bytes = self.nlu_engine.to_byte_array()
 
     def _roleback_nlu(self):
