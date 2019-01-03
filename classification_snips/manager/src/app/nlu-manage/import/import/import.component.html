@@ -6,6 +6,16 @@
     </div>
   </div>
 </div>
+<div class="row mt-2" *ngIf="!hasValidJson">
+  <div class="col">
+    <span class="alert-danger">{{errorMessage}}</span>
+  </div>
+</div>
+<div class="row mt-2" *ngIf="hasValidJson">
+  <div class="col">
+    <span class="alert-success">Json valid</span>
+  </div>
+</div>
 <div class="row mt-2">
   <div class="col">
     <button class="btn btn-primary" (click)="replaceData()" [disabled]="!hasValidJson">Replace current Data</button>
