@@ -1,11 +1,12 @@
+import datetime
+import zlib
+import base64
 import os
-import shutil
 
 from snips_nlu import SnipsNLUEngine, load_resources
-from pathlib import Path
+from cloudant.document import Document  #Temp. Database_context part
 
-ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
-ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
+
 
 #TODO: Trainer
 # 1. Laden der Trainingsdaten
@@ -22,7 +23,8 @@ class SnipsNluTrainer:
     def __init__(self, database_context):
         self.context = database_context
         self.training_data = ""
-
+        os.system("snips-nlu download de")
+        os.system("snips-nlu download en")
         load_resources("de")
         load_resources("en")
         self.nlu_engine = SnipsNLUEngine()
@@ -32,57 +34,46 @@ class SnipsNluTrainer:
         self._train_nlu()
         self._persist_nlu()
 
-    def get_nlu_engine(self):
-        if not ENGINE_PATH_NEW.exists():
-            print("Engine must be fitted! Please run 'start training'")
-        else:
-            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
-            self.nlu_engine = loaded_engine
-        return self.nlu_engine
-
-    def rollback_nlu(self):
-        result = False
-        if not ENGINE_PATH_OLD.exists():
-            print("No backups exist..")
-        else:
-            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
-            self.nlu_engine = loaded_engine
-            #Save backup as new engine
-            #Seve version before backup as old
-            result_persist = self._persist_nlu()
-            print("Engine rollback was successful")
-        return result
-
 
     def _load_training_data(self):
-        self.training_data = self.context #.get_trainings_data()
-        if self.training_data == "":
-            print("There are no training data!")
-        else:
-            print("Training data were loaded successfully")
+        self.training_data = self.context.get_trainings_data()
 
     def _train_nlu(self):
         self.nlu_engine.fit(self.training_data)
-        print("Engine was trained successfully")
 
     def _persist_nlu(self):
-        result = False
-        # first save engine attempt
-        if not (ENGINE_PATH_NEW.exists()):
-            self.nlu_engine.persist(ENGINE_PATH_NEW)
-            result = True
+        engine_as_bytearray = self.nlu_engine.to_byte_array()
+        formatted_engine = self._serializable_engine(engine_as_bytearray)
+        now = datetime.datetime.now()
+        engine = {'datetime': now.strftime("%Y-%m-%d %H:%M"), 'engine': formatted_engine}
+        #TODO: persist engine to cloudant
+        #TODO: if engine exist => rename it to old, persist new engine as new
+
+
+    def serializable_engine(self, engine_as_bytearray):
+        compressed_engine = zlib.compress(engine_as_bytearray) #compressed bytes
+        engine_base64 = base64.b64encode(compressed_engine) #encode binary to base64 =>bytes
+        engine_str = engine_base64.decode("utf-8") #encode base64 to ascii =>str
+        return engine_str
+
+    def deserializable_engine(self, engine_str ):
+        compressed_engine = base64.b64decode(engine_str)
+        engine_as_bytearray = zlib.decompress(compressed_engine)
+        return engine_as_bytearray
+
+    def _roleback_nlu(self):
+        pass #TODO: cut engine_old to engine_new, return engine_new
+
+    #TODO: Temp. Database_context part
+
+    #TODO:Die Idee: Es werden 2 Versionen von Engine in DB gespeichert(old,new)
+    #TODO: 1)Init&first_leart(engine_new <-), 2)Train again (engine_new -> engine_old, engine_new <-) in DB
+    def _create_doc_engine(self, client, engine_str, data_now):
+        engine_db = client["synapse"] #rename synapse to 'engine'
+        if not Document(engine_db, 'engine_new').exist():
+            engine_doc = dict([('_id', 'engine_new'), ('date', data_now), ('engine', engine_str)])
+            engine_db.create_document(engine_doc)
+            return True
         else:
-            #Remove&override old backup
-            if ENGINE_PATH_OLD.exists():
-                shutil.rmtree(ENGINE_PATH_OLD)
-                print("Removed old engine backup...")
-            os.rename(ENGINE_PATH_NEW, ENGINE_PATH_OLD)
-            self.nlu_engine.persist(ENGINE_PATH_NEW)
-            result = True
-        if result:
-            print("Engine was saved successfully")
-        return result
-
-
-
+            return False
 
