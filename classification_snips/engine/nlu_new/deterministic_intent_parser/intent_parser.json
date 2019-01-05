@@ -1,0 +1,71 @@
+{
+  "config": {
+    "max_pattern_length": 1000,
+    "max_queries": 100,
+    "unit_name": "deterministic_intent_parser"
+  },
+  "group_names_to_slot_names": {
+    "group_0": "meal_type",
+    "group_1": "meal_type",
+    "group_2": "date",
+    "group_3": "time",
+    "group_4": "date"
+  },
+  "language_code": "en",
+  "patterns": {
+    "greeting": [
+      "^\\s*Guten\\s*Tag\\s*$",
+      "^\\s*Hallo\\s*$",
+      "^\\s*Servus\\s*$",
+      "^\\s*Hi\\s*$",
+      "^\\s*Hey\\s*$"
+    ],
+    "joke": [
+      "^\\s*Wie\\s*w\u00e4re\\s*es\\s*mit\\s*einem\\s*Witz\\s*$",
+      "^\\s*Kannst\\s*du\\s*mir\\s*einen\\s*Witz\\s*erz\u00e4hlen\\s*\\?\\s*$",
+      "^\\s*Erz\u00e4hl\\s*mir\\s*einen\\s*Witz\\s*$"
+    ],
+    "meal": [
+      "^\\s*Welches\\s*essen\\s*gibt\\s*es\\s*bei\\s*der\\s*(?P<group_1>%MEALS%)\\s*\\?\\s*$",
+      "^\\s*Was\\s*gibt\\s*es\\s*bei\\s*(?P<group_0>%MEALS%)\\s*zu\\s*essen\\s*\\?\\s*$",
+      "^\\s*Was\\s*gibt\\s*es\\s*in\\s*der\\s*Mensa\\s*zu\\s*essen\\s*\\?\\s*$"
+    ],
+    "notAtAll": [
+      "^\\s*Garnicht\\s*$"
+    ],
+    "timetables": [
+      "^\\s*Welche\\s*Vorlesungen\\s*habe\\s*ich\\s*(?P<group_2>%SNIPSDATETIME%)\\s*\\?\\s*$",
+      "^\\s*Zeig\\s*mir\\s*meinen\\s*Stundenplan\\s*f\u00fcr\\s*(?P<group_3>%WEEKDAYS%)\\s*$",
+      "^\\s*Was\\s*habe\\s*ich\\s*(?P<group_4>%SNIPSDATETIME%)\\s*\\?\\s*$"
+    ],
+    "weather": [
+      "^\\s*Wie\\s*wird\\s*das\\s*Wetter\\s*heute\\s*\\?\\s*$",
+      "^\\s*Wird\\s*das\\s*Wetter\\s*heute\\s*sch\u00f6n\\s*\\?\\s*$",
+      "^\\s*Wie\\s*kalt\\s*ist\\s*das\\s*Wetter\\s*drau\u00dfen\\s*\\?\\s*$",
+      "^\\s*Scheint\\s*drau\u00dfen\\s*die\\s*Sonne\\s*\\?\\s*$",
+      "^\\s*Wie\\s*ist\\s*das\\s*Wetter\\s*drau\u00dfen\\s*\\?\\s*$",
+      "^\\s*Brauche\\s*ich\\s*drau\u00dfen\\s*eine\\s*Jake\\s*\\?\\s*$",
+      "^\\s*Brauche\\s*ich\\s*einen\\s*Schirm\\s*\\?\\s*$",
+      "^\\s*Wie\\s*warm\\s*ist\\s*das\\s*Wetter\\s*drau\u00dfen\\s*\\?\\s*$",
+      "^\\s*Brauche\\s*ich\\s*einen\\s*Regenschirm\\s*\\?\\s*$",
+      "^\\s*Wie\\s*ist\\s*das\\s*Wetter\\s*\\?\\s*$"
+    ],
+    "who": [
+      "^\\s*Wer\\s*bist\\s*du\\s*\\?\\s*$"
+    ]
+  },
+  "slot_names_to_entities": {
+    "greeting": {},
+    "joke": {},
+    "meal": {
+      "meal_type": "Meals"
+    },
+    "notAtAll": {},
+    "timetables": {
+      "date": "snips/datetime",
+      "time": "weekdays"
+    },
+    "weather": {},
+    "who": {}
+  }
+}
