@@ -24,8 +24,7 @@ class SnipsNluTrainer:
     def __init__(self, database_context):
         self.context = database_context
         self.training_data = ""
-        os.system("snips-nlu download de")
-        os.system("snips-nlu download en")
+
         load_resources("de")
         load_resources("en")
         self.nlu_engine = SnipsNLUEngine()
