@@ -3,6 +3,8 @@ import credentials_cos
 from ibm_botocore.client import Config
 
 #Setup to IBM Cloud Object Storage
+#Install per pip ibm-cos-sdk
+
 api_key = credentials_cos.API_KEY
 service_instance_id = credentials_cos.SERVICE_INSTANCE_ID
 auth_endpoint = 'https://iam.bluemix.net/oidc/token'
