@@ -5,3 +5,4 @@ metrics-tracker-client>=1.1.1
 nltk==3.2.5
 numpy==1.14.1
 snips_nlu==0.18.0
+ibm-cos-sdk==2.4.2

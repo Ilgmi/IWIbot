@@ -1,13 +1,11 @@
 import os
 import shutil
 
-
 from snips_nlu import SnipsNLUEngine, load_resources
 from pathlib import Path
 
 ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
 ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
-
 
 #TODO: Trainer
 # 1. Laden der Trainingsdaten
@@ -35,6 +33,11 @@ class SnipsNluTrainer:
         self._persist_nlu()
 
     def get_nlu_engine(self):
+        if not ENGINE_PATH_NEW.exists():
+            print("Engine must be fitted! Please run 'start training'")
+        else:
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
+            self.nlu_engine = loaded_engine
         return self.nlu_engine
 
     def rollback_nlu(self):
@@ -47,13 +50,12 @@ class SnipsNluTrainer:
             #Save backup as new engine
             #Seve version before backup as old
             result_persist = self._persist_nlu()
-            if result_persist and result:
-                print("Engine rollback was successful")
+            print("Engine rollback was successful")
         return result
 
 
     def _load_training_data(self):
-        self.training_data = self.context.get_trainings_data()
+        self.training_data = self.context #.get_trainings_data()
         if self.training_data == "":
             print("There are no training data!")
         else:
@@ -76,7 +78,7 @@ class SnipsNluTrainer:
                 print("Removed old engine backup...")
             os.rename(ENGINE_PATH_NEW, ENGINE_PATH_OLD)
             self.nlu_engine.persist(ENGINE_PATH_NEW)
-            result = True,
+            result = True
         if result:
             print("Engine was saved successfully")
         return result
