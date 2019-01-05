@@ -55,7 +55,6 @@ elif os.path.isfile('vcap-local.json'):
         url = 'https://' + creds['host']
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
-        #TODO: Rename 'synapse' to 'engine'
         client.create_database('synapse', throw_on_exists=False)
 
 cache = dict()
