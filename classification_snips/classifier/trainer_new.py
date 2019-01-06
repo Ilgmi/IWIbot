@@ -1,5 +1,7 @@
 import os
 import shutil
+import zipfile
+
 
 from snips_nlu import SnipsNLUEngine, load_resources
 from pathlib import Path
@@ -85,7 +87,7 @@ class SnipsNluTrainer:
         return result
 
     #Persist engine as zip to bucket to decrease up/download time (5-6 MB vs 1.5 MB compressed)
-    def _compress_engine(source, destination):
+    def _compress_engine(self, source, destination):
         base = os.path.basename(destination)
         name = base.split('.')[0]
         format = base.split('.')[1]
@@ -95,4 +97,7 @@ class SnipsNluTrainer:
         shutil.make_archive(name, format, archive_from, archive_to)
         shutil.move('%s.%s' % (name, format), destination)
 
+    def _decompress_engine(self, source, destination):
+        zip_ref = zipfile.ZipFile(source, 'r')
+        zip_ref.extractall(destination)
 
