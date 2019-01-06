@@ -27,7 +27,6 @@ class Classifier:
     #  * Constructor that creates a new Classifier and loads the current neuronal network from the database
     #  */
     def __init__(self):
-        snips_nlu.load_resources('snips_nlu_de')
         self.load()
 
     # /**
