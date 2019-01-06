@@ -1,7 +1,11 @@
-from snips_nlu import SnipsNLUEngine, load_resources
-from snips_nlu.default_configs import CONFIG_DE
+import os
+import shutil
 
-from .database_context import DatabaseContext
+from snips_nlu import SnipsNLUEngine, load_resources
+from pathlib import Path
+
+ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
+ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
 
 #TODO: Trainer
 # 1. Laden der Trainingsdaten
@@ -15,23 +19,70 @@ from .database_context import DatabaseContext
 
 class SnipsNluTrainer:
     """Class to train NLU"""
-    def __init__(self, client):
-        self.context = DatabaseContext(client)
+    def __init__(self, database_context):
+        self.context = database_context
+        self.training_data = ""
+
         load_resources("de")
         load_resources("en")
-        self.nlu_engine = SnipsNLUEngine(config=CONFIG_DE)
+        self.nlu_engine = SnipsNLUEngine()
+
+    def start_training(self):
+        self._load_training_data()
+        self._train_nlu()
+        self._persist_nlu()
+
+    def get_nlu_engine(self):
+        if not ENGINE_PATH_NEW.exists():
+            print("Engine must be fitted! Please run 'start training'")
+        else:
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
+            self.nlu_engine = loaded_engine
+        return self.nlu_engine
+
+    def rollback_nlu(self):
+        result = False
+        if not ENGINE_PATH_OLD.exists():
+            print("No backups exist..")
+        else:
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
+            self.nlu_engine = loaded_engine
+            #Save backup as new engine
+            #Seve version before backup as old
+            result_persist = self._persist_nlu()
+            print("Engine rollback was successful")
+        return result
 
 
     def _load_training_data(self):
-        data = self.context.get_trainings_data();
-        return data
+        self.training_data = self.context #.get_trainings_data()
+        if self.training_data == "":
+            print("There are no training data!")
+        else:
+            print("Training data were loaded successfully")
 
     def _train_nlu(self):
-        self.nlu_engine.fit(self._load_training_data())
+        self.nlu_engine.fit(self.training_data)
+        print("Engine was trained successfully")
 
     def _persist_nlu(self):
-        # TODO: Es gibt eine Methode um die SnipsNLU zu sichern.....
-        engine_bytes = self.nlu_engine.to_byte_array()
+        result = False
+        # first save engine attempt
+        if not (ENGINE_PATH_NEW.exists()):
+            self.nlu_engine.persist(ENGINE_PATH_NEW)
+            result = True
+        else:
+            #Remove&override old backup
+            if ENGINE_PATH_OLD.exists():
+                shutil.rmtree(ENGINE_PATH_OLD)
+                print("Removed old engine backup...")
+            os.rename(ENGINE_PATH_NEW, ENGINE_PATH_OLD)
+            self.nlu_engine.persist(ENGINE_PATH_NEW)
+            result = True
+        if result:
+            print("Engine was saved successfully")
+        return result
 
-    def _roleback_nlu(self):
-        pass
+
+
+
