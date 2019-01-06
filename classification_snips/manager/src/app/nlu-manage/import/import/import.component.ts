@@ -134,7 +134,13 @@ export class ImportComponent implements OnInit {
   addData() {
     // TODO: Add Modal
 
+    this.data.intents.getKeys().forEach( intentKey => {
+      this.nluService.intentService.createIntent(intentKey, this.data.intents.getValue(intentKey)).subscribe();
+    });
 
-    // TODO: Create Intents an Entities and add Data to current Trainings-Data
+    this.data.entities.getKeys().forEach( entityKey => {
+      this.nluService.entityService.createEntity(entityKey, this.data.entities.getValue(entityKey)).subscribe();
+    });
+
   }
 }
