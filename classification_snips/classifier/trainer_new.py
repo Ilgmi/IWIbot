@@ -3,6 +3,7 @@ import shutil
 
 from snips_nlu import SnipsNLUEngine, load_resources
 from pathlib import Path
+from cos_context import CosContext
 
 ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
 ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
@@ -48,7 +49,7 @@ class SnipsNluTrainer:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
             self.nlu_engine = loaded_engine
             #Save backup as new engine
-            #Seve version before backup as old
+            #Save version before backup as old
             result_persist = self._persist_nlu()
             print("Engine rollback was successful")
         return result
@@ -83,6 +84,15 @@ class SnipsNluTrainer:
             print("Engine was saved successfully")
         return result
 
-
+    #Persist engine as zip to bucket to decrease up/download time (5-6 MB vs 1.5 MB compressed)
+    def _compress_engine(source, destination):
+        base = os.path.basename(destination)
+        name = base.split('.')[0]
+        format = base.split('.')[1]
+        archive_from = os.path.dirname(source)
+        archive_to = os.path.basename(source.strip(os.sep))
+        print(source, destination, archive_from, archive_to)
+        shutil.make_archive(name, format, archive_from, archive_to)
+        shutil.move('%s.%s' % (name, format), destination)
 
 
