@@ -28,7 +28,7 @@ nltk.download('punkt')
 cf_deployment_tracker.track()
 metrics_tracker_client.DSX('org/repo')
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 client = None
 db = None
@@ -75,12 +75,9 @@ def removekey(d, key):
     return r
 
 
-# TODO: Route auf neue Angular App setzen
-
-
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return app.send_static_file('index.html')
 
 @app.route('/api/intent/<string:name>', methods=['GET'])
 def get_intent(name):
