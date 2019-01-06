@@ -4,6 +4,7 @@ import {isInstanceOf} from 'typedjson/js/typedjson/helpers';
 import {IntentTextWithEntity} from './model/intent/intent-text-with-entity';
 import {IntentText} from "./model/intent/intent-text";
 import {Intent} from "./model/intent/intent";
+import {InformationMessageService} from './services/information-message.service';
 
 @Component({
   selector: 'app-root',
@@ -13,16 +14,14 @@ import {Intent} from "./model/intent/intent";
 export class AppComponent {
   title = 'manager';
 
-  constructor(private nluService: NluService) {}
+  error = '';
+  information = '';
 
-  t: Intent = null;
-
-
-  testService() {
-    this.nluService.intentService.getIntents().subscribe( value => {
-      this.t = value.getValues()[0];
-      const tmp = value.getValues()[0].utterances[0].data;
+  constructor(private informationMessageService: InformationMessageService) {
+    this.informationMessageService.errorMessage.subscribe( message => {
+      this.error = message;
+      console.log(this.error);
     });
-
+    this.informationMessageService.informationMessage.subscribe( message => this.information = message);
   }
 }

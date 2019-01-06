@@ -9,6 +9,7 @@ import { SidenavComponent } from './sidenave/sidenav.component';
 import {RouterModule, Routes} from "@angular/router";
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ConfirmModalComponent } from './modal/confirm-modal/confirm-modal.component';
 
 
 
@@ -16,7 +17,8 @@ import { AppRoutingModule } from './app-routing.module';
   declarations: [
     AppComponent,
     SidenavComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,

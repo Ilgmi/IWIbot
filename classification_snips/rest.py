@@ -53,9 +53,9 @@ elif os.path.isfile('vcap-local.json'):
         user = creds['username']
         password = creds['password']
         url = 'https://' + creds['host']
-        client = Cloudant(user, password, url=url, connect=True)
-        client.create_database('trainer', throw_on_exists=False)
-        client.create_database('synapse', throw_on_exists=False)
+        #client = Cloudant(user, password, url=url, connect=True)
+        #client.create_database('trainer', throw_on_exists=False)
+        #client.create_database('synapse', throw_on_exists=False)
 
 cache = dict()
 
@@ -74,6 +74,9 @@ def removekey(d, key):
     del r[key]
     return r
 
+@app.route('/<string:n>')
+def toHome(n):
+    return home()
 
 @app.route('/')
 def home():

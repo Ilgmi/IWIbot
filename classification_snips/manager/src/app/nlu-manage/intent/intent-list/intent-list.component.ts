@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {NluService} from "../../../services/nlu.service";
 import {DataContainer} from "../../../model/data-container";
 import {Intent} from "../../../model/intent/intent";
+import {InformationMessageService} from '../../../services/information-message.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-intent-list',
@@ -12,7 +14,7 @@ export class IntentListComponent implements OnInit {
 
   public intents: DataContainer<Intent> = new DataContainer<Intent>();
 
-  constructor(private nluService: NluService) {
+  constructor(private nluService: NluService, private informationMessageService: InformationMessageService) {
 
     this.intents = new DataContainer<Intent>();
     this.nluService.intentService.getIntents().subscribe(
@@ -20,6 +22,15 @@ export class IntentListComponent implements OnInit {
         value.getKeys().forEach( key =>{
           this.intents.setValue(key, value.getValue(key));
         });
+      },
+      error => {
+        const e = <HttpErrorResponse>error;
+        if(e.status >= 400 && e.status < 500){
+          this.informationMessageService.errorMessage.emit(e.message);
+          console.log(e);
+        }else if(e.status >= 500 && e.status < 600){
+          this.informationMessageService.errorMessage.emit('Server Error');
+        }
       }
     );
 

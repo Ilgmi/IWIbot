@@ -3,6 +3,7 @@ import {main} from '@angular/compiler-cli/src/main';
 import {Entity} from '../../../model/entity/entity';
 import {Intent} from '../../../model/intent/intent';
 import {TrainingsData} from '../../../model/trainings-data';
+import {NluService} from '../../../services/nlu.service';
 
 @Component({
   selector: 'app-import',
@@ -19,7 +20,9 @@ export class ImportComponent implements OnInit {
 
   public errorMessage: string;
 
-  constructor() { }
+  private data: TrainingsData = null;
+
+  constructor(private nluService: NluService) { }
 
   ngOnInit() {
   }
@@ -79,6 +82,7 @@ export class ImportComponent implements OnInit {
       });
 
 
+      this.data = trainingsData;
 
 
     } catch (e) {
@@ -104,6 +108,23 @@ export class ImportComponent implements OnInit {
   }
 
   replaceData() {
+    this.nluService.entityService.getEntities().subscribe( entities => {
+      entities.getKeys().forEach( entity => {
+        this.nluService.entityService.deleteEntity(entity).subscribe();
+      });
+      this.data.entities.getKeys().forEach( entity => {
+        this.nluService.entityService.createEntity(entity, this.data.entities.getValue(entity)).subscribe();
+      });
+    });
+
+    this.nluService.intentService.getIntents().subscribe( intents => {
+      intents.getKeys().forEach( intent => {
+        this.nluService.intentService.deleteIntent(intent).subscribe();
+      });
+      this.data.intents.getKeys().forEach( intent => {
+        this.nluService.intentService.createIntent(intent, this.data.intents.getValue(intent)).subscribe();
+      });
+    });
     // TODO: Add Modal
 
 
