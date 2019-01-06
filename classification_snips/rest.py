@@ -56,8 +56,13 @@ elif os.path.isfile('vcap-local.json'):
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         client.create_database('synapse', throw_on_exists=False)
-
+#init client, Classifier
 cache = dict()
+cache["classifier"] = Classifier()
+cache["classifier"].load()
+cache["failures"] = []
+#cache classifier
+#cache trainer
 
 
 # On Bluemix, get the port number from the environment variable PORT
@@ -217,16 +222,19 @@ def getIntent():
     request_object = request.json
     sentence = request.json['sentence']
     if client is not None:
-        if 'intents' not in cache.keys():
-            cache["intents"] = Classifier("intents", client)
+        if 'classifier' not in cache.keys():
+            cache["classifier"] = Classifier()
 
-        classifier = cache["intents"]
+        classifier = cache["classifier"]
 
-        results = classifier.classify(sentence)
+        result = classifier.classifyIntent(sentence)
+
+        if result[0][1] < classifier.ERROR_THRESHOLD:
+            cache["failures"] = [sentence, result[0]]
 
         classification = dict()
-        if len(results) > 0:
-            classification['intent'] = results[0][0]
+        if len(result) > 0:
+            classification['intent'] = result[0][0]
         else:
             classification['intent'] = ""
     else:
@@ -251,17 +259,15 @@ def getIntent():
 def getEntity():
     request_object = request.json
     sentence = request.json['sentence']
-    prior_intents = request.json['context']["priorIntent"]["intent"]
+
     if client is not None:
-        classifier_name = "entities@" + prior_intents
+        if 'classifier' not in cache.keys():
+            cache["classifier"] = Classifier()
 
-        if classifier_name not in cache.keys():
-            cache[classifier_name] = Classifier(classifier_name, client)
-
-        classifier = cache[classifier_name]
-
+        classifier = cache["classifier"]
+        #keep
         results = classifier.classify(sentence)
-
+        #strip keep only name of entity
         classification = dict()
         if len(results) > 0:
             classification['entity'] = results[0][0]
