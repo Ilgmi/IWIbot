@@ -11,8 +11,8 @@ ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
 ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
 ENGINE_PATH_ZIP = Path(__file__).parents[1] / "engine"
 
-NEW_ENGINE_NAME_ZIP = "engine_new.zip"
-OLD_ENGINE_NAME_ZIP = "engine_old.zip"
+NEW_ENGINE_NAME_ZIP = "nlu_new.zip"
+OLD_ENGINE_NAME_ZIP = "nlu_old.zip"
 
 #TODO: Trainer
 # 1. Laden der Trainingsdaten
@@ -74,13 +74,13 @@ class SnipsNluTrainer:
         # first save engine attempt
         if not (ENGINE_PATH_NEW.exists()):
             self.nlu_engine.persist(ENGINE_PATH_NEW)
-            result = self._persinlu_enginest_to_bucket(ENGINE_PATH_NEW, ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP)
+            result = self._persist_to_bucket(ENGINE_PATH_NEW, ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP)
         else:
             #Remove&override old backup
             if ENGINE_PATH_OLD.exists():
                 shutil.rmtree(ENGINE_PATH_OLD)
                 self.cos_context.remove_file(OLD_ENGINE_NAME_ZIP)
-                print("Removed old engine backup...")
+                print("Overrided old engine backup...")
             #save(rename) new engine as old local and in persist
             os.rename(ENGINE_PATH_NEW, ENGINE_PATH_OLD)
             self.cos_context.rename_file(NEW_ENGINE_NAME_ZIP, OLD_ENGINE_NAME_ZIP)
@@ -92,7 +92,6 @@ class SnipsNluTrainer:
         return result
 
     def rollback_nlu(self):
-        #TODO: rollback with ibm persist
         result = False
         if not ENGINE_PATH_OLD.exists():
             print("No backups exist locally..")
@@ -103,13 +102,13 @@ class SnipsNluTrainer:
                 print("Found saved backups in bucket..")
                 self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
                 print("Restored backup from bucket to {0}".format(ENGINE_PATH_ZIP))
-                #TODO: Test rollback
                 self.rollback_nlu()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
             self.nlu_engine = loaded_engine
-            #Save backup as new engine
-            #Save version before backup as old
+            #Remove new/old local nlu folders. Save backup as new engine
+            shutil.rmtree(ENGINE_PATH_NEW)
+            shutil.rmtree(ENGINE_PATH_OLD)
             result = self._persist_nlu()
             print("Engine rollback was successful")
         return result
