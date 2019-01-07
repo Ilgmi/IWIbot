@@ -11,8 +11,8 @@ ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
 ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
 ENGINE_PATH_ZIP = Path(__file__).parents[1] / "engine"
 
-NEW_ENGINE_NAME_ZIP = "engine_new.zip"
-OLD_ENGINE_NAME_ZIP = "engine_old.zip"
+NEW_ENGINE_NAME_ZIP = "nlu_new.zip"
+OLD_ENGINE_NAME_ZIP = "nlu_old.zip"
 
 #TODO: Trainer
 # 1. Laden der Trainingsdaten
@@ -41,17 +41,26 @@ class SnipsNluTrainer:
         self._persist_nlu()
 
     def get_nlu_engine(self):
-        #TODO: load engine from bucket
         if not ENGINE_PATH_NEW.exists():
-            print("Engine must be fitted! Please run 'start training'")
+            print("No engine found locally...")
+            print("Searching in bucket...")
+            if not self.cos_context.file_exist_in_bucket(NEW_ENGINE_NAME_ZIP):
+                print("There are no engine in bucket!")
+                print("Engine must be fitted! Please run 'start training'")
+                return  ""
+            else:
+                print("Found saved engine in bucket..")
+                self._load_from_bucket(ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
+                print("Restored saved engine from bucket to {0}".format(ENGINE_PATH_ZIP))
+                self.get_nlu_engine()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
             self.nlu_engine = loaded_engine
+            print("Success! Engine was fitted...")
         return self.nlu_engine
 
     def _load_training_data(self):
-        #TODO: remove for deployment
-        self.training_data = self.context #.get_trainings_data()
+        self.training_data = self.context #.get_trainings_data() TODO: uncomment for deployment
         if self.training_data == "":
             print("There are no training data!")
         else:
@@ -72,7 +81,7 @@ class SnipsNluTrainer:
             if ENGINE_PATH_OLD.exists():
                 shutil.rmtree(ENGINE_PATH_OLD)
                 self.cos_context.remove_file(OLD_ENGINE_NAME_ZIP)
-                print("Removed old engine backup...")
+                print("Overrided old engine backup...")
             #save(rename) new engine as old local and in persist
             os.rename(ENGINE_PATH_NEW, ENGINE_PATH_OLD)
             self.cos_context.rename_file(NEW_ENGINE_NAME_ZIP, OLD_ENGINE_NAME_ZIP)
@@ -84,16 +93,24 @@ class SnipsNluTrainer:
         return result
 
     def rollback_nlu(self):
-        #TODO: rollback with ibm persist
         result = False
-        if not ENGINE_PATH_OLD.exists():
-            print("No backups exist..")
+        if not ENGINE_PATH_NEW.exists():
+            print("No backups exist locally..")
+            if not self.cos_context.file_exist_in_bucket(OLD_ENGINE_NAME_ZIP):
+                print("There are no backups in bucket..")
+                print("Data rollback is not possible!")
+            else:
+                print("Found saved backups in bucket..")
+                self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
+                print("Restored backup from bucket to {0}".format(ENGINE_PATH_ZIP))
+                self.rollback_nlu()
         else:
-            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
             self.nlu_engine = loaded_engine
-            #Save backup as new engine
-            #Save version before backup as old
-            result_persist = self._persist_nlu()
+            #Remove new/old local nlu folders. Save backup as new engine
+            #shutil.rmtree(ENGINE_PATH_NEW)
+            #shutil.rmtree(ENGINE_PATH_OLD)
+            result = self._persist_nlu()
             print("Engine rollback was successful")
         return result
 
@@ -109,7 +126,6 @@ class SnipsNluTrainer:
         shutil.move('%s.%s' % (name, format), destination)
         print("Engine was zipped...")
 
-    # trainer.decompress_engine(str(ENGINE_PATH_NEW_ZIP/"engine.zip"), "/home/anon/Downloads")
     def _decompress_engine(self, source, destination):
         zip_ref = zipfile.ZipFile(source, 'r')
         zip_ref.extractall(destination)
@@ -117,6 +133,7 @@ class SnipsNluTrainer:
 
     #Engine folder -> zip -> save to ibm bucket
     def _persist_to_bucket(self, source, destination, file_name):
+        #Python3 -> python2 compatibility, libpath Path to string
         source = str(source)
         destination = str(destination)
         file_name = str(file_name)
@@ -124,4 +141,14 @@ class SnipsNluTrainer:
         result = self.cos_context.upload_file(destination + "/" + file_name, file_name)
         return result
 
+    # Download zipped engine -> save -> unzip it
+    def _load_from_bucket(self, destination_zip, file_name, to_unzip_path):
+        #Python3 -> python2 compatibility, libpath Path to string
+        destination_zip = str(destination_zip)
+        file_name = str(file_name)
+        to_unzip_path = str(to_unzip_path)
+        result = self.cos_context.download_file(destination_zip, file_name)
+        if result:
+            self._decompress_engine(destination_zip + "/" + file_name, to_unzip_path)
+        return result
 

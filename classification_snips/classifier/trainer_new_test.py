@@ -1,4 +1,5 @@
 from trainer_new import SnipsNluTrainer
+from cos_context import CosContext
 
 
 import json
@@ -12,23 +13,10 @@ with DATA_PATH.open(encoding="utf8") as f:
     sample_dataset = json.load(f)
 
 trainer = SnipsNluTrainer(sample_dataset)
-trainer.start_training()
-
-#trainer_new.rollback_nlu()
-#nlu_engine = trainer_new.get_nlu_engine()
+#trainer.start_training()
+#nlu_engine = trainer.get_nlu_engine()
+trainer.rollback_nlu()
 
 #text = "Hallo IWIBot ?"
-#parsing = nlu_engine.parse(text)
-#print(json.dumps(parsing, indent=2))
-
-#text = "Was gibt es heute zu essen in der Mensa?"
-#parsing = nlu_engine.parse(text)
-#print(json.dumps(parsing, indent=2))
-
-#text = "Wie wird das Wetter?"
-#parsing = nlu_engine.parse(text)
-#print(json.dumps(parsing, indent=2))
-
-#text = "Welches essen gibt es bei der Aktionstheke ? "
 #parsing = nlu_engine.parse(text)
 #print(json.dumps(parsing, indent=2))

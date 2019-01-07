@@ -11,6 +11,7 @@ class CosContext:
     cos_res = ""
     cos_client = ""
 
+    #init cos client, create default bucket
     def __init__(self):
         # high-level API
         self.cos_res = ibm_boto3.resource('s3',
@@ -109,6 +110,19 @@ class CosContext:
             print("Bucket {0} was deleted".format(self.bucket_name))
         return result
 
+    def file_exist_in_bucket(self, file_name):
+        result = True
+        try:
+            #do a HEAD request and look at the the result,
+            self.cos_res.Object(DEFAULT_BUCKET_NAME, file_name).load()
+        except ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                result = False
+                print("The object {0} does not exist in bucket {1} !".format(file_name, DEFAULT_BUCKET_NAME))
+            else:
+                result = False
+                print(e)
+        return result
 
 
 
