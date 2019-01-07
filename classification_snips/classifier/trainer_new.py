@@ -47,6 +47,7 @@ class SnipsNluTrainer:
             if not self.cos_context.file_exist_in_bucket(NEW_ENGINE_NAME_ZIP):
                 print("There are no engine in bucket!")
                 print("Engine must be fitted! Please run 'start training'")
+                return  ""
             else:
                 print("Found saved engine in bucket..")
                 self._load_from_bucket(ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
@@ -93,7 +94,7 @@ class SnipsNluTrainer:
 
     def rollback_nlu(self):
         result = False
-        if not ENGINE_PATH_OLD.exists():
+        if not ENGINE_PATH_NEW.exists():
             print("No backups exist locally..")
             if not self.cos_context.file_exist_in_bucket(OLD_ENGINE_NAME_ZIP):
                 print("There are no backups in bucket..")
@@ -104,11 +105,11 @@ class SnipsNluTrainer:
                 print("Restored backup from bucket to {0}".format(ENGINE_PATH_ZIP))
                 self.rollback_nlu()
         else:
-            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
             self.nlu_engine = loaded_engine
             #Remove new/old local nlu folders. Save backup as new engine
-            shutil.rmtree(ENGINE_PATH_NEW)
-            shutil.rmtree(ENGINE_PATH_OLD)
+            #shutil.rmtree(ENGINE_PATH_NEW)
+            #shutil.rmtree(ENGINE_PATH_OLD)
             result = self._persist_nlu()
             print("Engine rollback was successful")
         return result
