@@ -1,4 +1,5 @@
 from trainer_new import SnipsNluTrainer
+from cos_context import CosContext
 
 
 import json
@@ -11,8 +12,9 @@ DATA_PATH = Path(__file__).resolve().parents[1]/"data.json"
 with DATA_PATH.open(encoding="utf8") as f:
     sample_dataset = json.load(f)
 
-trainer = SnipsNluTrainer(sample_dataset)
-trainer.start_training()
+#trainer = SnipsNluTrainer(sample_dataset)
+#trainer.start_training()
+
 
 #trainer_new.rollback_nlu()
 #nlu_engine = trainer_new.get_nlu_engine()

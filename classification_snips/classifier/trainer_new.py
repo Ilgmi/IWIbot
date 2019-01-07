@@ -117,6 +117,7 @@ class SnipsNluTrainer:
 
     #Engine folder -> zip -> save to ibm bucket
     def _persist_to_bucket(self, source, destination, file_name):
+        #Python3 -> python2 compatibility, libpath Path to string
         source = str(source)
         destination = str(destination)
         file_name = str(file_name)
@@ -124,4 +125,14 @@ class SnipsNluTrainer:
         result = self.cos_context.upload_file(destination + "/" + file_name, file_name)
         return result
 
+    # Download zipped engine -> save -> unzip it
+    def _load_from_bucket(self, destination_zip, file_name, to_unzip_path):
+        #Python3 -> python2 compatibility, libpath Path to string
+        destination_zip = str(destination_zip)
+        file_name = str(file_name)
+        to_unzip_path = str(to_unzip_path)
+        result = self.cos_context.download_file(destination_zip, file_name)
+        if result:
+            self._decompress_engine(destination_zip + "/" + file_name, to_unzip_path)
+        return result
 
