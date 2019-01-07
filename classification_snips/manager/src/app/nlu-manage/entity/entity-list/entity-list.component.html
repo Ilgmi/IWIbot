@@ -2,6 +2,13 @@
   <input #newEntity type="text">
   <button class="btn btn-success" (click)="addNewEntity(newEntity.value)">Add</button>
 </div>
+<div>
+  <label for="build-ins" >Build In Entities</label>
+  <select id="build-ins" #selectedElement>
+    <option *ngFor="let e of buildInEntities" [value]="e">{{e}}</option>
+  </select>
+  <button class="btn btn-success" (click)="addBuildIn(selectedElement.value)">Add</button>
+</div>
 <div *ngIf="entities !== null">
   <div class="card-deck">
     <div class="card" *ngFor="let entityKey of entities.getKeys()">
@@ -9,7 +16,7 @@
         {{entityKey}}
       </div>
       <div class="card-body">
-        <a class="btn btn-primary" [routerLink]="'/entity/' + entityKey">Edit</a>
+        <a *ngIf="!isBuildIn(entityKey)" class="btn btn-primary" [routerLink]="'/entity/' + entityKey">Edit</a>
         <button class="btn btn-danger" (click)="deleteEntity(entityKey)">Delete</button>
       </div>
     </div>

@@ -11,11 +11,14 @@ import {Entity} from '../model/entity/entity';
 })
 export class EntityService {
   private readonly apiUrl = '/api/entity';
+  private readonly apiUrlSnips = this.apiUrl + '/snips';
 
   constructor(private httpClient: HttpClient) { }
 
   public createEntity(key: string, entity: Entity) {
     console.log(key, entity);
+    key = key.replace('/', '%2F');
+    console.log(key);
     return this.httpClient.post(this.apiUrl + '/' + key, entity);
   }
 
@@ -33,9 +36,22 @@ export class EntityService {
       );
   }
 
-  public deleteEntity(key: string){
+  public deleteEntity(key: string) {
     return this.httpClient.delete(this.apiUrl + '/' + key);
   }
+
+  public getBuildInEntities(): Observable<string[]> {
+    return this.httpClient.get<string[]>(this.apiUrlSnips);
+  }
+
+  public addBuildInEntity(name: string): Observable<any>{
+    return this.httpClient.post<any>(this.apiUrlSnips + '/' + name, null);
+  }
+
+  public deleteBuildInEntity(name: string): Observable<any>{
+    return this.httpClient.delete<any>(this.apiUrlSnips + '/' + name);
+  }
+
 
   public getEntities(): Observable<DataContainer<Entity>> {
     return this.httpClient.get(this.apiUrl)

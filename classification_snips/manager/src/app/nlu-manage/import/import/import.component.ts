@@ -73,7 +73,7 @@ export class ImportComponent implements OnInit {
       trainingsData.entities.getKeys().forEach( (entityKeys) => {
         try {
           const snipsEntities = ['snips/datetime'];
-          if(snipsEntities.indexOf(entityKeys) === -1){
+          if (snipsEntities.indexOf(entityKeys) === -1) {
             this.checkEntity(trainingsData.entities.getValue(entityKeys));
           }
         } catch (e) {
@@ -108,12 +108,17 @@ export class ImportComponent implements OnInit {
   }
 
   replaceData() {
+    // TODO: Add Modal
     this.nluService.entityService.getEntities().subscribe( entities => {
       entities.getKeys().forEach( entity => {
         this.nluService.entityService.deleteEntity(entity).subscribe();
       });
       this.data.entities.getKeys().forEach( entity => {
-        this.nluService.entityService.createEntity(entity, this.data.entities.getValue(entity)).subscribe();
+        if (entity.includes('snips/')) {
+          this.nluService.entityService.addBuildInEntity(entity.replace('snips/', '')).subscribe();
+        } else {
+          this.nluService.entityService.createEntity(entity, this.data.entities.getValue(entity)).subscribe();
+        }
       });
     });
 
@@ -125,7 +130,7 @@ export class ImportComponent implements OnInit {
         this.nluService.intentService.createIntent(intent, this.data.intents.getValue(intent)).subscribe();
       });
     });
-    // TODO: Add Modal
+
 
 
     // TODO: Create Intents and Entities and replace current data
@@ -138,8 +143,12 @@ export class ImportComponent implements OnInit {
       this.nluService.intentService.createIntent(intentKey, this.data.intents.getValue(intentKey)).subscribe();
     });
 
-    this.data.entities.getKeys().forEach( entityKey => {
-      this.nluService.entityService.createEntity(entityKey, this.data.entities.getValue(entityKey)).subscribe();
+    this.data.entities.getKeys().forEach( entity => {
+      if (entity.includes('snips/')) {
+        this.nluService.entityService.addBuildInEntity(entity.replace('snips/', '')).subscribe();
+      } else {
+        this.nluService.entityService.createEntity(entity, this.data.entities.getValue(entity)).subscribe();
+      }
     });
 
   }

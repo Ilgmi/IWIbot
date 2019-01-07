@@ -21,8 +21,21 @@ class Intents {
 })
 export class NluService {
 
-  public constructor(public intentService: IntentService,
+  private readonly apiUrl = '/api/nlu/';
+
+  public constructor(
+    private httpClient: HttpClient,
+    public intentService: IntentService,
                      public entityService: EntityService
   ) {}
+
+  public trainNLU(){
+    this.httpClient.get(this.apiUrl + 'train');
+  }
+
+
+  public roleBack(){
+    this.httpClient.get(this.apiUrl + 'roleback');
+  }
 
 }

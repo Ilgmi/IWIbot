@@ -11,6 +11,7 @@ import {FormsModule} from "@angular/forms";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { HomeComponent } from './home/home.component';
 import { ImportComponent } from './import/import/import.component';
+import { TrainingComponent } from './training/training.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ImportComponent } from './import/import/import.component';
     IntentEditComponent,
     SentenceEditComponent,
     HomeComponent,
-    ImportComponent
+    ImportComponent,
+    TrainingComponent
   ],
   exports: [
     IntentEditComponent,

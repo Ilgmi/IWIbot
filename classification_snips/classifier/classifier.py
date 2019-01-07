@@ -54,12 +54,15 @@ class Classifier:
     # /**
     #  * Reloads the neuronal network for the classifier from the database.
     #  */
+    # def load(self):
+    #     if len(os.listdir('../nlu_data/nlu')) != 0:
+    #         self.nlu_engine = SnipsNLUEngine.from_path("../nlu_data/nlu")
+    #     elif len(os.listdir('../nlu_data/nlu_old')) != 0:
+    #         print("Directory is not empty")
+    #         self.nlu_engine = SnipsNLUEngine.from_path("../nlu_data/nlu_old")
+    #     else:
+    #         print("retrieving trained engine FAILED!")
+
     def load(self):
-        if len(os.listdir('../nlu_data/nlu')) != 0:
-            self.nlu_engine = SnipsNLUEngine.from_path("../nlu_data/nlu")
-        elif len(os.listdir('../nlu_data/nlu_old')) != 0:
-            print("Directory is not empty")
-            self.nlu_engine = SnipsNLUEngine.from_path("../nlu_data/nlu_old")
-        else:
-            print("retrieving trained engine FAILED!")
+        print("nothing")
 

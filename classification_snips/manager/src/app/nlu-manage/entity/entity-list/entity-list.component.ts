@@ -12,6 +12,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class EntityListComponent implements OnInit {
 
+  public buildInEntities: string[];
+
   public entities: DataContainer<Entity> = null;
 
   constructor(private nluService: NluService, private infoMessageService: InformationMessageService) {
@@ -27,9 +29,19 @@ export class EntityListComponent implements OnInit {
         this.infoMessageService.errorMessage.emit('Server Error');
       }
     });
+
+    this.nluService.entityService.getBuildInEntities().subscribe( entities => this.buildInEntities = entities);
   }
 
   ngOnInit() {
+  }
+
+  addBuildIn(name: string){
+    this.nluService.entityService.addBuildInEntity(name).subscribe( v => this.updateList());
+  }
+
+  isBuildIn(name: string){
+    return name.includes('snips/');
   }
 
   private updateList() {

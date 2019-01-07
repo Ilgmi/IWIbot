@@ -56,13 +56,13 @@ elif os.path.isfile('vcap-local.json'):
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         client.create_database('synapse', throw_on_exists=False)
-#init client, Classifier
+# init client, Classifier
 cache = dict()
 cache["classifier"] = Classifier()
 cache["classifier"].load()
 cache["failures"] = []
-#cache classifier
-#cache trainer
+# cache classifier
+# cache trainer
 
 
 # On Bluemix, get the port number from the environment variable PORT
@@ -70,7 +70,7 @@ cache["failures"] = []
 port = int(os.getenv('PORT', 8000))
 
 
-def get_database_context():
+def get_database_context() -> DatabaseContext:
     return DatabaseContext(client)
 
 
@@ -79,13 +79,10 @@ def removekey(d, key):
     del r[key]
     return r
 
-@app.route('/<string:n>')
-def toHome(n):
-    return home()
-
 @app.route('/')
 def home():
     return app.send_static_file('index.html')
+
 
 @app.route('/api/intent/<string:name>', methods=['GET'])
 def get_intent(name):
@@ -95,12 +92,14 @@ def get_intent(name):
     else:
         return "Intent Not Found", 404
 
+
 @app.route('/api/intent', methods=['GET'])
 def get_intents():
     database_context = get_database_context()
     print(database_context, file=sys.stderr)
     intents = database_context.get_intents()
     return jsonify(intents)
+
 
 @app.route('/api/intent/<string:name>', methods=['POST'])
 def create_intent(name):
@@ -117,6 +116,7 @@ def update_intent(name):
     if len(name) > 0 and len(intent) > 0:
         return jsonify(get_database_context().update_intent(name, intent)), 200
     return "Name:( " + name + " ): Or Intent:( " + intent + " ): Not set"
+
 
 @app.route('/api/intent/<string:name>', methods=['DELETE'])
 def delete_intent(name):
@@ -146,6 +146,20 @@ def update_entity(name):
         return jsonify(get_database_context().update_entity(name, entity)), 200
     return "Name:( " + name + " ): Or entity:( " + entity + " ): Not set"
 
+
+@app.route('/api/entity/<string:name>', methods=['DELETE'])
+def delete_entity(name):
+    intents = get_database_context().get_entities()
+    if len(name) > 0 and name in intents:
+        success = get_database_context().delete_entity(name)
+        if success:
+            return jsonify(success), 200
+        else:
+            return jsonify(success), 400
+    else:
+        return jsonify(False), 404
+
+
 @app.route('/api/entity/<string:name>', methods=['GET'])
 def get_entity(name):
     entities = get_database_context().get_entities()
@@ -154,12 +168,33 @@ def get_entity(name):
     else:
         return "Intent Not Found", 404
 
+
 @app.route('/api/entity', methods=['GET'])
 def get_entities():
     database_context = get_database_context()
     print(database_context, file=sys.stderr)
     entities = database_context.get_entities()
     return jsonify(entities)
+
+
+@app.route('/api/entity/snips/<string:name>', methods=['POST'])
+def add_build_in_entity(name):
+    name = "snips/" + name
+    get_database_context().create_entity(name, "{}")
+    return jsonify(True)
+
+
+@app.route('/api/entity/snips/<string:name>', methods=['DELETE'])
+def delete_build_in_entity(name):
+    name = "snips/" + name
+    return delete_entity(name)
+
+
+@app.route('/api/entity/snips', methods=['GET'])
+def get_build_in_entity():
+    return jsonify(['amountOfMoney', 'datetime', 'duration', 'musicAlbum', 'musicArtist', 'musicTrack',
+            'number', 'ordinal', 'percentage', 'temperature'])
+
 
 @app.route('/api/add/sentence/<string:sentence>', methods=['PUT'])
 def update_sentences(sentence):
@@ -268,9 +303,9 @@ def getEntity():
             cache["classifier"] = Classifier()
 
         classifier = cache["classifier"]
-        #keep
+        # keep
         results = classifier.classify(sentence)
-        #strip keep only name of entity
+        # strip keep only name of entity
         classification = dict()
         if len(results) > 0:
             classification['entity'] = results[0][0]
