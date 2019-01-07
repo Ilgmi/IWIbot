@@ -118,13 +118,13 @@
       {
         "args": {
           "entity_labels": [
-            "snips/ordinal",
             "snips/percentage",
             "snips/temperature",
             "snips/datetime",
+            "snips/number",
             "snips/duration",
             "snips/amountOfMoney",
-            "snips/number"
+            "snips/ordinal"
           ],
           "language_code": "en",
           "tagging_scheme_code": 1
@@ -155,7 +155,7 @@
     "tagging_scheme": 1,
     "unit_name": "crf_slot_filler"
   },
-  "crf_model_file": "model65ir8jk2.crfsuite",
+  "crf_model_file": "modelmxln325q.crfsuite",
   "intent": "meal",
   "language_code": "en",
   "slot_name_mapping": {

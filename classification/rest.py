@@ -56,6 +56,7 @@ elif os.path.isfile('vcap-local.json'):
 cache = dict()
 if client is not None:
     # create Classifier cache on startup
+    #cache engine
     cache["intents"] = Classifier("intents", client)
     cache["intents"].load()
     cache["entities@timetables"] = Classifier("entities@timetables", client)
@@ -224,6 +225,7 @@ def addIntent():
 #  */
 @app.route('/api/trainIntents', methods=['POST'])
 def trainIntents():
+
     if client is not None:
         intents = Trainer("intents", client)
         intents.start_training()
