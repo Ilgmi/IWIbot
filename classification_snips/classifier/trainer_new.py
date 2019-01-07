@@ -74,7 +74,7 @@ class SnipsNluTrainer:
         # first save engine attempt
         if not (ENGINE_PATH_NEW.exists()):
             self.nlu_engine.persist(ENGINE_PATH_NEW)
-            result = self._persist_to_bucket(ENGINE_PATH_NEW, ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP)
+            result = self._persinlu_enginest_to_bucket(ENGINE_PATH_NEW, ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP)
         else:
             #Remove&override old backup
             if ENGINE_PATH_OLD.exists():
@@ -95,13 +95,22 @@ class SnipsNluTrainer:
         #TODO: rollback with ibm persist
         result = False
         if not ENGINE_PATH_OLD.exists():
-            print("No backups exist..")
+            print("No backups exist locally..")
+            if not self.cos_context.file_exist_in_bucket(OLD_ENGINE_NAME_ZIP):
+                print("There are no backups in bucket..")
+                print("Data rollback is not possible!")
+            else:
+                print("Found saved backups in bucket..")
+                self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
+                print("Restored backup from bucket to {0}".format(ENGINE_PATH_ZIP))
+                #TODO: Test rollback
+                self.rollback_nlu()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_OLD)
             self.nlu_engine = loaded_engine
             #Save backup as new engine
             #Save version before backup as old
-            result_persist = self._persist_nlu()
+            result = self._persist_nlu()
             print("Engine rollback was successful")
         return result
 
