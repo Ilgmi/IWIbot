@@ -41,17 +41,25 @@ class SnipsNluTrainer:
         self._persist_nlu()
 
     def get_nlu_engine(self):
-        #TODO: load engine from bucket
         if not ENGINE_PATH_NEW.exists():
-            print("Engine must be fitted! Please run 'start training'")
+            print("No engine found locally...")
+            print("Searching in bucket...")
+            if not self.cos_context.file_exist_in_bucket(NEW_ENGINE_NAME_ZIP):
+                print("There are no engine in bucket!")
+                print("Engine must be fitted! Please run 'start training'")
+            else:
+                print("Found saved engine in bucket..")
+                self._load_from_bucket(ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
+                print("Restored saved engine from bucket to {0}".format(ENGINE_PATH_ZIP))
+                self.get_nlu_engine()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
             self.nlu_engine = loaded_engine
+            print("Success! Engine was fitted...")
         return self.nlu_engine
 
     def _load_training_data(self):
-        #TODO: remove for deployment
-        self.training_data = self.context #.get_trainings_data()
+        self.training_data = self.context #.get_trainings_data() TODO: uncomment for deployment
         if self.training_data == "":
             print("There are no training data!")
         else:
@@ -109,7 +117,6 @@ class SnipsNluTrainer:
         shutil.move('%s.%s' % (name, format), destination)
         print("Engine was zipped...")
 
-    # trainer.decompress_engine(str(ENGINE_PATH_NEW_ZIP/"engine.zip"), "/home/anon/Downloads")
     def _decompress_engine(self, source, destination):
         zip_ref = zipfile.ZipFile(source, 'r')
         zip_ref.extractall(destination)
