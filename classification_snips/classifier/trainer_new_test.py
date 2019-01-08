@@ -20,3 +20,4 @@ trainer.rollback_nlu()
 #text = "Hallo IWIBot ?"
 #parsing = nlu_engine.parse(text)
 #print(json.dumps(parsing, indent=2))
+

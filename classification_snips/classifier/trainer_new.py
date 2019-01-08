@@ -30,6 +30,7 @@ class SnipsNluTrainer:
         self.context = database_context
         self.training_data = ""
         self.cos_context = CosContext()
+        self.check_trainer_dir(ENGINE_PATH_ZIP)
 
         load_resources("de")
         load_resources("en")
@@ -51,7 +52,7 @@ class SnipsNluTrainer:
             else:
                 print("Found saved engine in bucket..")
                 self._load_from_bucket(ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
-                print("Restored saved engine from bucket to {0}".format(ENGINE_PATH_ZIP))
+                print("Restored saved engine from bucket to '{0}'".format(ENGINE_PATH_ZIP))
                 self.get_nlu_engine()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
@@ -102,7 +103,7 @@ class SnipsNluTrainer:
             else:
                 print("Found saved backups in bucket..")
                 self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
-                print("Restored backup from bucket to {0}".format(ENGINE_PATH_ZIP))
+                print("Restored backup from bucket to '{0}'".format(ENGINE_PATH_ZIP))
                 self.rollback_nlu()
         else:
             loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
@@ -152,3 +153,10 @@ class SnipsNluTrainer:
             self._decompress_engine(destination_zip + "/" + file_name, to_unzip_path)
         return result
 
+    def check_trainer_dir(self, path):
+         exist=os.path.isdir(path)
+         if not exist:
+             os.makedirs(path)
+             exist = True
+             print("Path '{0}' was created!".format(path))
+         return exist

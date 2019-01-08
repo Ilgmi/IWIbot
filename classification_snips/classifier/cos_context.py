@@ -62,10 +62,10 @@ class CosContext:
 
     def remove_file(self, file_name):
         result = True
-        print("Deleting item: {0}".format(file_name))
+        print("Deleting item: '{0}' from bucket {1}...".format(file_name, self.bucket_name))
         try:
             self.cos_res.Object(self.bucket_name, file_name).delete()
-            print("Item: {0} deleted!".format(file_name))
+            print("OK.Item: '{0}' deleted from bucket!".format(file_name))
         except ClientError as be:
             result = False
             print("CLIENT ERROR: {0}\n".format(be))
@@ -83,7 +83,7 @@ class CosContext:
             result = False
             print(e)
         else:
-            print("Renamed file {0} to {1} ...".format(file_name, new_name))
+            print("Renamed file '{0}' to '{1}' ...".format(file_name, new_name))
         return result
 
 
@@ -107,7 +107,7 @@ class CosContext:
             result = False
             print(e)
         else:
-            print("Bucket {0} was deleted".format(self.bucket_name))
+            print("Bucket '{0}' was deleted".format(self.bucket_name))
         return result
 
     def file_exist_in_bucket(self, file_name):
@@ -118,7 +118,7 @@ class CosContext:
         except ClientError as e:
             if e.response['Error']['Code'] == "404":
                 result = False
-                print("The object {0} does not exist in bucket {1} !".format(file_name, DEFAULT_BUCKET_NAME))
+                print("The object '{0}' does not exist in bucket '{1}' !".format(file_name, DEFAULT_BUCKET_NAME))
             else:
                 result = False
                 print(e)
