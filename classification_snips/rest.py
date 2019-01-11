@@ -11,16 +11,17 @@ import nltk
 from classifier.classifier import Classifier
 from classifier.startup import populate_intents, populate_entities_for_meal, populate_entities_for_timetables, \
     populate_entities_for_navigation
-from classifier.trainer import Trainer
+from classifier.trainer import Trainer #TODO: remove old solution
+from classifier.trainer_new import SnipsNluTrainer
+from classifier.cos_context import CosContext
 from classifier.database_context import DatabaseContext
 from cloudant import Cloudant
 from flask import Flask, render_template, request, jsonify
 
 ###
-# Text Classification using Artificial Neural Networks (ANN)
-# Based on https://machinelearnings.co/text-classification-using-neural-networks-f5cd7b8765c6
+# Text Classification using Snips NLU
+#
 ###
-
 
 nltk.download('punkt')
 
@@ -44,11 +45,19 @@ if 'VCAP_SERVICES' in os.environ:
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         client.create_database('synapse', throw_on_exists=False)
+        #Cloud Object Storage
+        creds_cos = vcap['cloud-object-storage'][0]['credentials']
+        api_key_cos = creds_cos['apikey']
+        #:TODO create envir before deploy!!!
+        auth_endpoint_cos = creds_cos['auth_endpoint']
+        #:TODO create envir before deploy!!!
+        service_endpoint_cos = creds_cos['service_endpoint']
+        service_instance_id_cos = creds_cos['resource_instance_id']
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
         print('Found local VCAP_SERVICES')
-
+        #Cloudant
         creds = vcap['services']['cloudantNoSQLDB'][0]['credentials']
         user = creds['username']
         password = creds['password']
@@ -56,6 +65,13 @@ elif os.path.isfile('vcap-local.json'):
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         client.create_database('synapse', throw_on_exists=False)
+        #Cloud Object Storage
+        creds_cos = vcap['services']['cloud-object-storage'][0]['credentials']
+        api_key_cos = creds_cos['api_key']
+        auth_endpoint_cos = creds_cos['auth_endpoint']
+        service_endpoint_cos = creds_cos['service_endpoint']
+        service_instance_id_cos = creds_cos['service_instance_id']
+
 # init client, Classifier
 cache = dict()
 cache["classifier"] = Classifier()
@@ -73,6 +89,11 @@ port = int(os.getenv('PORT', 8000))
 def get_database_context() -> DatabaseContext:
     return DatabaseContext(client)
 
+def get_cos_context() -> CosContext:
+    return CosContext(api_key_cos, service_instance_id_cos, auth_endpoint_cos, service_endpoint_cos)
+
+def get_trainer() -> SnipsNluTrainer:
+    return SnipsNluTrainer(get_database_context(), get_cos_context())
 
 def removekey(d, key):
     r = dict(d)
@@ -83,6 +104,22 @@ def removekey(d, key):
 def home():
     return app.send_static_file('index.html')
 
+
+@app.route('/api/trainEngine', methods=['GET'])
+def train_Engine():
+    result = get_trainer().start_training()
+    if result:
+        return "Success! Engine was trained", 200
+    else:
+        return "Error! Engine wasn't trained..", 404
+
+@app.route('/api/rollbackEngine', methods=['GET'])
+def rollback_Engine():
+    result = get_trainer().rollback_nlu()
+    if result:
+        return "Success! Engine was restored", 200
+    else:
+        return "Error! Engine rollback is not possible..", 404
 
 @app.route('/api/intent/<string:name>', methods=['GET'])
 def get_intent(name):

@@ -1,5 +1,4 @@
 import ibm_boto3
-import credentials_cos
 from ibm_botocore.client import Config
 from ibm_botocore.client import ClientError
 
@@ -12,14 +11,14 @@ class CosContext:
     cos_client = ""
 
     #init cos client, create default bucket
-    def __init__(self):
+    def __init__(self, api_key, service_instance_id, auth_endpoint, service_endpoint):
         # high-level API
         self.cos_res = ibm_boto3.resource('s3',
-                                     ibm_api_key_id=credentials_cos.API_KEY,
-                                     ibm_service_instance_id=credentials_cos.SERVICE_INSTANCE_ID,
-                                     ibm_auth_endpoint=credentials_cos.AUTH_ENDPOINT,
-                                     config=Config(signature_version='oauth'),
-                                     endpoint_url= credentials_cos.SERVICE_ENDPOINT)
+                                          ibm_api_key_id=api_key,
+                                          ibm_service_instance_id=service_instance_id,
+                                          ibm_auth_endpoint=auth_endpoint,
+                                          config=Config(signature_version='oauth'),
+                                          endpoint_url=service_endpoint)
 
         # low-level API from cos resorce
         self.cos_client = self.cos_res.meta.client

@@ -5,7 +5,7 @@ import zipfile
 
 from snips_nlu import SnipsNLUEngine, load_resources
 from pathlib import Path
-from cos_context import CosContext
+
 
 ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
 ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
@@ -14,23 +14,14 @@ ENGINE_PATH_ZIP = Path(__file__).parents[1] / "engine"
 NEW_ENGINE_NAME_ZIP = "nlu_new.zip"
 OLD_ENGINE_NAME_ZIP = "nlu_old.zip"
 
-#TODO: Trainer
-# 1. Laden der Trainingsdaten
-# 2. NLU Trainieren
-# 3. NLU in nlu_new persistieren
-# 4. aktuelles nlu in nlu_old umbenen
-# 5. nlu_new in nlu umbenenen
-# Es soll immer eine alte Version zum RoleBack da sein.
-# Methode für einen RoleBack sein.
-# Methode um zu Trainieren --> Parameter DatabaseContext um daten zu holen
-
 class SnipsNluTrainer:
-    """Class to train NLU"""
-    def __init__(self, database_context):
+    """Class to train Snips NLU with training data from Cloudant DB with rollback support."""
+    def __init__(self, database_context, cos_context):
+        #Cloudant DB
         self.context = database_context
         self.training_data = ""
-        self.cos_context = CosContext()
-        self.check_trainer_dir(ENGINE_PATH_ZIP)
+        self.cos_context = cos_context
+        self._check_trainer_dir(ENGINE_PATH_ZIP)
 
         load_resources("de")
         load_resources("en")
@@ -39,7 +30,30 @@ class SnipsNluTrainer:
     def start_training(self):
         self._load_training_data()
         self._train_nlu()
-        self._persist_nlu()
+        result = self._persist_nlu()
+        return result
+
+    def rollback_nlu(self):
+        result = False
+        if not ENGINE_PATH_NEW.exists():
+            print("No backups exist locally..")
+            if not self.cos_context.file_exist_in_bucket(OLD_ENGINE_NAME_ZIP):
+                print("There are no backups in bucket..")
+                print("Data rollback is not possible!")
+            else:
+                print("Found saved backups in bucket..")
+                self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
+                print("Restored backup from bucket to '{0}'".format(ENGINE_PATH_ZIP))
+                self.rollback_nlu()
+        else:
+            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
+            self.nlu_engine = loaded_engine
+            #Remove new/old local nlu folders. Save backup as new engine
+            #shutil.rmtree(ENGINE_PATH_NEW)
+            #shutil.rmtree(ENGINE_PATH_OLD)
+            result = self._persist_nlu()
+            print("Engine rollback was successful")
+        return result
 
     def get_nlu_engine(self):
         if not ENGINE_PATH_NEW.exists():
@@ -93,28 +107,6 @@ class SnipsNluTrainer:
             print("Engine was saved successfully")
         return result
 
-    def rollback_nlu(self):
-        result = False
-        if not ENGINE_PATH_NEW.exists():
-            print("No backups exist locally..")
-            if not self.cos_context.file_exist_in_bucket(OLD_ENGINE_NAME_ZIP):
-                print("There are no backups in bucket..")
-                print("Data rollback is not possible!")
-            else:
-                print("Found saved backups in bucket..")
-                self._load_from_bucket(ENGINE_PATH_ZIP, OLD_ENGINE_NAME_ZIP, ENGINE_PATH_ZIP)
-                print("Restored backup from bucket to '{0}'".format(ENGINE_PATH_ZIP))
-                self.rollback_nlu()
-        else:
-            loaded_engine = SnipsNLUEngine.from_path(ENGINE_PATH_NEW)
-            self.nlu_engine = loaded_engine
-            #Remove new/old local nlu folders. Save backup as new engine
-            #shutil.rmtree(ENGINE_PATH_NEW)
-            #shutil.rmtree(ENGINE_PATH_OLD)
-            result = self._persist_nlu()
-            print("Engine rollback was successful")
-        return result
-
     #Persist engine as zip to bucket to decrease up/download time (5-6 MB vs 1.5 MB compressed)
     def _compress_engine(self, source, destination):
         base = os.path.basename(destination)
@@ -153,7 +145,7 @@ class SnipsNluTrainer:
             self._decompress_engine(destination_zip + "/" + file_name, to_unzip_path)
         return result
 
-    def check_trainer_dir(self, path):
+    def _check_trainer_dir(self, path):
          exist=os.path.isdir(path)
          if not exist:
              os.makedirs(path)
