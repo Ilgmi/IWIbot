@@ -4,6 +4,7 @@ import {NluService} from '../../../services/nlu.service';
 import {Intent} from '../../../model/intent/intent';
 import {Entity} from '../../../model/entity/entity';
 import {EntityData} from '../../../model/entity/entity-data';
+import {formatNumber} from '@angular/common';
 
 @Component({
   selector: 'app-entity-edit',
@@ -53,7 +54,7 @@ export class EntityEditComponent implements OnInit {
 
   deleteSynonym(data: EntityData, index: number) {
     const synonyms = data.synonyms;
-    if(index < synonyms.length && index >= 0 ){
+    if (index < synonyms.length && index >= 0 ) {
       synonyms.splice(index, 1);
     }
   }
@@ -64,7 +65,7 @@ export class EntityEditComponent implements OnInit {
 
   deleteEntityData(entity: Entity, data: EntityData) {
     const index = entity.data.indexOf(data);
-    if(index >= 0){
+    if (index >= 0) {
       entity.data.splice(index, 1);
     }
   }

@@ -21,7 +21,7 @@ class Intents {
 })
 export class NluService {
 
-  private readonly apiUrl = '/api/nlu/';
+  private readonly apiUrl = '/api/';
 
   public constructor(
     private httpClient: HttpClient,
@@ -29,13 +29,25 @@ export class NluService {
                      public entityService: EntityService
   ) {}
 
-  public trainNLU(){
-    this.httpClient.get(this.apiUrl + 'train');
+  public getIntent(s: {sentence: string}) {
+    return this.httpClient.post(this.apiUrl + 'getIntent', s);
+  }
+
+  public getEntity(s: {sentence: string}) {
+    return this.httpClient.post(this.apiUrl + 'getEntity', s);
+  }
+
+  public trainNLU(): Observable<string> {
+    return this.httpClient.get(this.apiUrl + 'trainEngine').pipe(
+      map( v => v.toString())
+    );
   }
 
 
-  public roleBack(){
-    this.httpClient.get(this.apiUrl + 'roleback');
+  public roleBack(): Observable<string> {
+    return this.httpClient.get(this.apiUrl + 'rollbackEngine').pipe(
+      map( v => v.toString())
+    );
   }
 
 }

@@ -3,9 +3,21 @@
   <div class="col">
     <div class="form-group">
       <label>Text:</label>
-      <input type="text" class="form-control">
-      <button class="btn btn-primary mt-2">Test</button>
+      <input type="text" class="form-control" [(ngModel)]="sentence">
+      <button class="btn btn-primary mt-2" (click)="testNlu()">Test</button>
     </div>
   </div>
+</div>
+<div class="row">
+  <div class="col">
+    Intent:
+  </div>
+  <div class="col">{{intent}}</div>
+</div>
+<div class="row">
+  <div class="col">
+    Entity:
+  </div>
+  <div class="col">{{entity}}</div>
 </div>
 

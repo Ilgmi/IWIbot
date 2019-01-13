@@ -109,17 +109,17 @@ def home():
 def train_Engine():
     result = get_trainer().start_training()
     if result:
-        return "Success! Engine was trained", 200
+        return jsonify("Success! Engine was trained"), 200
     else:
-        return "Error! Engine wasn't trained..", 404
+        return jsonify("Error! Engine wasn't trained.."), 404
 
 @app.route('/api/rollbackEngine', methods=['GET'])
 def rollback_Engine():
     result = get_trainer().rollback_nlu()
     if result:
-        return "Success! Engine was restored", 200
+        return jsonify("Success! Engine was restored"), 200
     else:
-        return "Error! Engine rollback is not possible..", 404
+        return jsonify("Error! Engine rollback is not possible.."), 404
 
 @app.route('/api/intent/<string:name>', methods=['GET'])
 def get_intent(name):
@@ -127,7 +127,7 @@ def get_intent(name):
     if name in intents:
         return jsonify(intents[name]), 200
     else:
-        return "Intent Not Found", 404
+        return jsonify("Intent Not Found"), 404
 
 
 @app.route('/api/intent', methods=['GET'])
@@ -180,6 +180,11 @@ def create_entity(name):
 def update_entity(name):
     entity = request.json
     if len(name) > 0 and len(entity) > 0:
+        if entity['matching_strictness'] == 0:
+            entity['matching_strictness'] = 0.0
+        if entity['matching_strictness'] == 1:
+            entity['matching_strictness'] = 1.0
+
         return jsonify(get_database_context().update_entity(name, entity)), 200
     return "Name:( " + name + " ): Or entity:( " + entity + " ): Not set"
 
@@ -221,7 +226,7 @@ def get_sentences():
 @app.route('/api/entity/snips/<string:name>', methods=['POST'])
 def add_build_in_entity(name):
     name = "snips/" + name
-    get_database_context().create_entity(name, "{}")
+    get_database_context().create_entity(name, {})
     return jsonify(True)
 
 
