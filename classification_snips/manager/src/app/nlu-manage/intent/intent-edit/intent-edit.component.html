@@ -8,7 +8,7 @@
   </div>
 
   <button (click)="addSentence()" class="btn btn-success">Add</button>
-  <app-sentence-edit *ngFor="let s of intent.utterances" [sentence]="s"></app-sentence-edit>
+  <app-sentence-edit (deleteSentence)="deleteSentence($event)" [listOfEntities]="listOfEntities" *ngFor="let s of intent.utterances" [sentence]="s"></app-sentence-edit>
 
 
 </div>

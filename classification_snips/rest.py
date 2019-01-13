@@ -213,6 +213,10 @@ def get_entities():
     entities = database_context.get_entities()
     return jsonify(entities)
 
+@app.route('/api/sentences', methods=['GET'])
+def get_sentences():
+    sentences = get_database_context().get_sentences()
+    return jsonify(sentences)
 
 @app.route('/api/entity/snips/<string:name>', methods=['POST'])
 def add_build_in_entity(name):

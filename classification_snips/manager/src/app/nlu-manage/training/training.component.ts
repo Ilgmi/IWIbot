@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {NluService} from '../../services/nlu.service';
 
 @Component({
   selector: 'app-training',
@@ -7,17 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrainingComponent implements OnInit {
 
-  constructor() { }
+  constructor(private nluService: NluService) { }
 
   ngOnInit() {
   }
 
   trainNlu(){
-
+    this.nluService.trainNLU();
   }
 
   roleBack(){
-
+    this.nluService.roleBack();
   }
 
 }

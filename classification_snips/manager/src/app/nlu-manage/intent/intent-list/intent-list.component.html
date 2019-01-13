@@ -1,15 +1,19 @@
-<div>
-  <input #newIntent type="text">
-  <button class="btn btn-success" (click)="addNewIntent(newIntent.value)">Add</button>
+<div class="row">
+  <div class="col">
+    <input #newIntent type="text" class="form-control">
+  </div>
+  <div class="col">
+    <button class="btn btn-success " (click)="addNewIntent(newIntent.value)">Add</button>
+  </div>
 </div>
 <div *ngIf="intents !== null">
-  <div class="card-deck">
-    <div class="card" *ngFor="let intentKey of intents.getKeys()">
+  <div class="d-flex flex-wrap align-content-start mt-2">
+    <div class="card mr-2 mt-2" style="width: 250px;" *ngFor="let intentKey of intents.getKeys()">
       <div class="card-header">
         {{intentKey}}
       </div>
       <div class="card-body">
-        <a class="btn btn-primary" [routerLink]="'/intent/' + intentKey">Edit</a>
+        <a class="btn btn-primary mr-2" [routerLink]="'/intent/' + intentKey">Edit</a>
         <button class="btn btn-danger" (click)="deleteIntent(intentKey)">Delete</button>
       </div>
     </div>

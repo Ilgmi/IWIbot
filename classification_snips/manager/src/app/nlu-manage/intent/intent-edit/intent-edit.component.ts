@@ -3,6 +3,9 @@ import {Intent} from '../../../model/intent/intent';
 import {NluService} from '../../../services/nlu.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IntentSentence} from '../../../model/intent/intent-sentence';
+import {DataContainer} from '../../../model/data-container';
+import {Entity} from '../../../model/entity/entity';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-intent-edit',
@@ -22,6 +25,8 @@ export class IntentEditComponent implements OnInit {
   intent: Intent = null;
   intentCopy: Intent = null;
 
+  listOfEntities: string[] = [];
+
   private function;
   ngOnInit() {
     this.name = this.route.snapshot.paramMap.get('name');
@@ -33,10 +38,12 @@ export class IntentEditComponent implements OnInit {
       value => {
         this.intent = value;
         this.intentCopy = <Intent>this.deepCopy(value);
-        console.log(this.intentCopy);
-        console.log(this.intent);
       }
     );
+    this.nluService.entityService.getEntities().subscribe( entities => {
+      console.log(entities.getKeys());
+      this.listOfEntities = entities.getKeys();
+    });
   }
 
   public updateName() {
@@ -101,5 +108,12 @@ export class IntentEditComponent implements OnInit {
     }
 
     throw new Error('Unable to copy obj! Its type isn\'t supported.');
+  }
+
+  deleteSentence(sentence: IntentSentence) {
+    const index = this.intent.utterances.indexOf(sentence);
+    if (index > -1) {
+      this.intent.utterances.splice(index, 1);
+    }
   }
 }

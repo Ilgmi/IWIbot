@@ -1,22 +1,36 @@
-<div>
-  <input #newEntity type="text">
-  <button class="btn btn-success" (click)="addNewEntity(newEntity.value)">Add</button>
+<div class="row">
+  <div class="col">
+    <input #newEntity type="text" class="form-control">
+  </div>
+  <div class="col">
+    <button class="btn btn-success" (click)="addNewEntity(newEntity.value)">Add</button>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <label for="build-ins" >Build In Entities</label>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <select id="build-ins" class="form-control" #selectedElement>
+      <option *ngFor="let e of buildInEntities" [value]="e">{{e}}</option>
+    </select>
+  </div>
+  <div class="col">
+    <button class="btn btn-success" (click)="addBuildIn(selectedElement.value)">Add</button>
+  </div>
 </div>
 <div>
-  <label for="build-ins" >Build In Entities</label>
-  <select id="build-ins" #selectedElement>
-    <option *ngFor="let e of buildInEntities" [value]="e">{{e}}</option>
-  </select>
-  <button class="btn btn-success" (click)="addBuildIn(selectedElement.value)">Add</button>
 </div>
 <div *ngIf="entities !== null">
-  <div class="card-deck">
-    <div class="card" *ngFor="let entityKey of entities.getKeys()">
+  <div class="d-flex flex-wrap align-content-start mt-2">
+    <div class="card mr-2 mt-2" style="width: 250px;" *ngFor="let entityKey of entities.getKeys()">
       <div class="card-header">
         {{entityKey}}
       </div>
       <div class="card-body">
-        <a *ngIf="!isBuildIn(entityKey)" class="btn btn-primary" [routerLink]="'/entity/' + entityKey">Edit</a>
+        <a *ngIf="!isBuildIn(entityKey)" class="btn btn-primary mr-2" [routerLink]="'/entity/' + entityKey">Edit</a>
         <button class="btn btn-danger" (click)="deleteEntity(entityKey)">Delete</button>
       </div>
     </div>
