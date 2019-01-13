@@ -65,4 +65,5 @@ vcap-local.json
 
 # Snips NLU Engine
 engine
+static
 
