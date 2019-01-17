@@ -1,7 +1,6 @@
 import numpy as np
 import os
 import snips_nlu
-from pathlib import Path
 from snips_nlu import load_resources, SnipsNLUEngine
 
 from classification_snips.classifier.trainer_new import SnipsNluTrainer
