@@ -1,8 +1,17 @@
 import numpy as np
 import os
 import snips_nlu
+from pathlib import Path
 from snips_nlu import load_resources, SnipsNLUEngine
 
+from classification_snips.classifier.trainer_new import SnipsNluTrainer
+
+ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
+ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
+ENGINE_PATH_ZIP = Path(__file__).parents[1] / "engine"
+
+NEW_ENGINE_NAME_ZIP = "nlu_new.zip"
+OLD_ENGINE_NAME_ZIP = "nlu_old.zip"
 
 
 #TODO: Classifier
@@ -64,5 +73,9 @@ class Classifier:
     #         print("retrieving trained engine FAILED!")
 
     def load(self):
-        print("nothing")
+        trainer = SnipsNluTrainer()
+        trainer.get_nlu_engine()
+        self.nlu_engine = trainer.nlu_engine
+        print("Classifier loaded")
+
 

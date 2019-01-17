@@ -76,7 +76,6 @@ elif os.path.isfile('vcap-local.json'):
 cache = dict()
 cache["classifier"] = Classifier()
 cache["classifier"].load()
-cache["failures"] = []
 # cache classifier
 # cache trainer
 
@@ -274,6 +273,7 @@ def testIntent():
         else:
             if 'intents' not in cache.keys():
                 cache["intents"] = Classifier("intents", client)
+                get_database_context().add_not_found_sentence(sentence)
 
             classifier = cache["intents"]
 
@@ -314,7 +314,7 @@ def getIntent():
         result = classifier.classifyIntent(sentence)
 
         if result[0][1] < classifier.ERROR_THRESHOLD:
-            cache["failures"] = [sentence, result[0]]
+            get_database_context().add_not_found_sentence(sentence)
 
         classification = dict()
         if len(result) > 0:
