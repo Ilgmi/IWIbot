@@ -6,12 +6,6 @@ from snips_nlu import load_resources, SnipsNLUEngine
 
 from classification_snips.classifier.trainer_new import SnipsNluTrainer
 
-ENGINE_PATH_OLD = Path(__file__).parents[1] / "engine/nlu_old"
-ENGINE_PATH_NEW = Path(__file__).parents[1] / "engine/nlu_new"
-ENGINE_PATH_ZIP = Path(__file__).parents[1] / "engine"
-
-NEW_ENGINE_NAME_ZIP = "nlu_new.zip"
-OLD_ENGINE_NAME_ZIP = "nlu_old.zip"
 
 
 #TODO: Classifier
