@@ -255,6 +255,7 @@ def update_sentences(sentence):
 #  */
 @app.route('/api/testIntent', methods=['POST'])
 def testIntent():
+    # TODO: Muss auch angepasst erden
     request_object = request.json
     sentence = request.json['sentence']
     if client is not None:
@@ -273,6 +274,7 @@ def testIntent():
         else:
             if 'intents' not in cache.keys():
                 cache["intents"] = Classifier("intents", client)
+                # TODO: Warum hier ?
                 get_database_context().add_not_found_sentence(sentence)
 
             classifier = cache["intents"]

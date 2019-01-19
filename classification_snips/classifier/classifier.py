@@ -3,7 +3,7 @@ import os
 import snips_nlu
 from snips_nlu import load_resources, SnipsNLUEngine
 
-from classification_snips.classifier.trainer_new import SnipsNluTrainer
+from .trainer_new import SnipsNluTrainer
 
 
 
