@@ -9,6 +9,7 @@ import {TrainingsData} from '../model/trainings-data';
 import {DataContainer} from '../model/data-container';
 import {IntentService} from './intent.service';
 import {EntityService} from './entity.service';
+import {SentenceService} from './sentence.service';
 
 @jsonObject()
 class Intents {
@@ -26,7 +27,8 @@ export class NluService {
   public constructor(
     private httpClient: HttpClient,
     public intentService: IntentService,
-                     public entityService: EntityService
+                     public entityService: EntityService,
+    public sentenceService: SentenceService
   ) {}
 
   public getIntent(s: {sentence: string}) {

@@ -6,7 +6,8 @@ export class IntentText implements IntentTextInterface, Deserializable<IntentTex
   public text = '';
 
 
-  constructor() {
+  constructor(text = '') {
+    this.text = text;
   }
 
   deserialize(input: any): IntentText {

@@ -12,6 +12,7 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { HomeComponent } from './home/home.component';
 import { ImportComponent } from './import/import/import.component';
 import { TrainingComponent } from './training/training.component';
+import { SentenceComponent } from './sentence/sentence.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { TrainingComponent } from './training/training.component';
     SentenceEditComponent,
     HomeComponent,
     ImportComponent,
-    TrainingComponent
+    TrainingComponent,
+    SentenceComponent
   ],
   exports: [
     IntentEditComponent,

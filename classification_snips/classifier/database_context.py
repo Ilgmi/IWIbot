@@ -46,6 +46,7 @@ class DatabaseContext:
     def update_sentences(self, sentences):
         doc = self.get_doc('sentences')
         self.save_doc(doc, 'sentences', sentences)
+        return self.get_sentences()
 
     def log(self, value):
         print(value, file=sys.stderr)

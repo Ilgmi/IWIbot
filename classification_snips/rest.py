@@ -241,11 +241,15 @@ def get_build_in_entity():
             'number', 'ordinal', 'percentage', 'temperature'])
 
 
-@app.route('/api/add/sentence/<string:sentence>', methods=['PUT'])
+@app.route('/api/sentence/', methods=['GET'])
+def get_sentences():
+    return jsonify(get_database_context().get_sentences())
+
+@app.route('/api/sentence/<string:sentence>', methods=['PUT'])
 def update_sentences(sentence):
     if len(sentence) > 0:
         return jsonify(get_database_context().add_not_found_sentence(sentence)), 200
-    return "NO SENTENCE FOUND"
+    return jsonify('NO Content'), 204
 
 
 # /**

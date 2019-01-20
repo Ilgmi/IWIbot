@@ -1,0 +1,16 @@
+<div>
+  <div class="row" *ngFor="let s of sentences; let i = index">
+    <div class="col">
+      {{s}}
+    </div>
+    <div class="col">
+      <select #intentSelection>
+        <option></option>
+        <option *ngFor="let k of intents.getKeys()" [value]="k">{{k}}</option>
+      </select>
+    </div>
+    <div class="col">
+      <button class="btn btn-success" (click)="sentenceToIntent(intentSelection.value, s, i )">Add</button>
+    </div>
+  </div>
+</div>
