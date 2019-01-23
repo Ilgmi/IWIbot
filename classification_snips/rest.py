@@ -23,6 +23,10 @@ from flask import Flask, render_template, request, jsonify
 #
 ###
 
+# TODO: Sentences
+# TODO: Ausgabe beim Test
+# TODO: Aufsetzen in Cloud
+
 nltk.download('punkt')
 
 # Emit Bluemix deployment event
