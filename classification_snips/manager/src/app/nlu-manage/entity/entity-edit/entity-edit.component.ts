@@ -36,6 +36,10 @@ export class EntityEditComponent implements OnInit {
     );
   }
 
+  public updateSynonym(synonyms, index, value){
+    synonyms[index] = value;
+  }
+
   public updateName() {
     this.nluService.entityService.createEntity(this.name, this.entity).subscribe(
       value => this.nluService.entityService.deleteEntity(this.oldName).subscribe(

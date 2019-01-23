@@ -75,7 +75,7 @@ elif os.path.isfile('vcap-local.json'):
 # init client, Classifier
 cache = dict()
 cache["classifier"] = Classifier()
-cache["classifier"].load()
+cache["classifier"].load(DatabaseContext(client), creds_cos)
 # cache classifier
 # cache trainer
 
@@ -108,6 +108,8 @@ def home():
 def train_Engine():
     result = get_trainer().start_training()
     if result:
+        cache["classifier"] = Classifier()
+        cache["classifier"].load(DatabaseContext(client), creds_cos)
         return jsonify("Success! Engine was trained"), 200
     else:
         return jsonify("Error! Engine wasn't trained.."), 404
@@ -217,11 +219,6 @@ def get_entities():
     entities = database_context.get_entities()
     return jsonify(entities)
 
-@app.route('/api/sentences', methods=['GET'])
-def get_sentences():
-    sentences = get_database_context().get_sentences()
-    return jsonify(sentences)
-
 @app.route('/api/entity/snips/<string:name>', methods=['POST'])
 def add_build_in_entity(name):
     name = "snips/" + name
@@ -252,55 +249,6 @@ def update_sentences(sentence):
     return jsonify('NO Content'), 204
 
 
-# /**
-#  * Endpoint to classify a conversation service request JSON for the intent.
-#  *
-#  * @return A JSON response with the classification
-#  */
-@app.route('/api/testIntent', methods=['POST'])
-def testIntent():
-    # TODO: Muss auch angepasst erden
-    request_object = request.json
-    sentence = request.json['sentence']
-    if client is not None:
-        if sentence == 'populate':
-            # populate database with base data and train all neuronal netwroks
-            populate_intentspopulate_intents(client)
-            populate_entities_for_meal(client)
-            populate_entities_for_timetables(client)
-            populate_entities_for_navigation(client)
-            cache["intents"].load()
-            cache["entities@timetables"].load()
-            cache["entities@meal"].load()
-
-            classification = dict()
-            classification['intent'] = "Populated"
-        else:
-            if 'intents' not in cache.keys():
-                cache["intents"] = Classifier("intents", client)
-                # TODO: Warum hier ?
-                get_database_context().add_not_found_sentence(sentence)
-
-            classifier = cache["intents"]
-
-            results = classifier.classify(sentence)
-
-            classification = dict()
-            if len(results) > 0:
-                classification['intent'] = results[0][0]
-            else:
-                classification['intent'] = ""
-    else:
-        print("NO DATABASE")
-
-        classification = dict()
-        classification['intent'] = "NO DATABASE"
-
-    response_object = removekey(request_object, "sentence")
-    response_object["classifications"] = classification
-
-    return 'Results: %s' % classification['intent']
-
 
 # /**
 #  * Endpoint to classify a conversation service request JSON for the intent.
@@ -309,6 +257,8 @@ def testIntent():
 #  */
 @app.route('/api/getIntent', methods=['POST'])
 def getIntent():
+    print(request.json)
+    print(request.json['sentence'])
     request_object = request.json
     sentence = request.json['sentence']
     if client is not None:
@@ -318,13 +268,15 @@ def getIntent():
         classifier = cache["classifier"]
 
         result = classifier.classifyIntent(sentence)
-
-        if result[0][1] < classifier.ERROR_THRESHOLD:
-            get_database_context().add_not_found_sentence(sentence)
-
         classification = dict()
+        print(result)
         if len(result) > 0:
-            classification['intent'] = result[0][0]
+
+            print(result)
+            if result[1] < classifier.ERROR_THRESHOLD:
+                get_database_context().add_not_found_sentence(sentence)
+
+            classification['intent'] = result[0]
         else:
             classification['intent'] = ""
     else:
@@ -356,8 +308,9 @@ def getEntity():
 
         classifier = cache["classifier"]
         # keep
-        results = classifier.classify(sentence)
+        results = classifier.classifyEntity(sentence)
         # strip keep only name of entity
+        print(results)
         classification = dict()
         if len(results) > 0:
             classification['entity'] = results[0][0]

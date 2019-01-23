@@ -29,7 +29,7 @@ class Classifier:
     #  * Constructor that creates a new Classifier and loads the current neuronal network from the database
     #  */
     def __init__(self):
-        self.load()
+        x = 1
 
     # /**
     #  * Classifies a sentence.
@@ -38,7 +38,10 @@ class Classifier:
     #  */
     def classifyIntent(self, sentence):
         result = self.nlu_engine.parse(sentence)
-        return_result = [result["intent"]["intentName"], result["intent"]["probability"]]
+        return_result = []
+        print("classifyIntent",result)
+        if result['intent'] is not None:
+            return_result = [result["intent"]["intentName"], result["intent"]["probability"]]
         return return_result
 
     # /**
@@ -49,9 +52,13 @@ class Classifier:
     def classifyEntity(self, sentence):
         result = self.nlu_engine.parse(sentence)
         return_result = []
-        for slot in result["slots"]:
-            return_result.append([slot["entity"], result["intent"]["probability"]])
-        return return_result
+        print(result)
+        if result['slots'] is not None:
+            for slot in result["slots"]:
+                return_result.append([slot["entity"], result["intent"]["probability"]])
+            return return_result
+        else:
+            return return_result
 
     # /**
     #  * Reloads the neuronal network for the classifier from the database.
@@ -65,8 +72,8 @@ class Classifier:
     #     else:
     #         print("retrieving trained engine FAILED!")
 
-    def load(self):
-        trainer = SnipsNluTrainer()
+    def load(self, database_context, cos_context):
+        trainer = SnipsNluTrainer(database_context, cos_context)
         trainer.get_nlu_engine()
         self.nlu_engine = trainer.nlu_engine
         print("Classifier loaded")
