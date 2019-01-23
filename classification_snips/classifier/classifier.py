@@ -55,7 +55,7 @@ class Classifier:
         print(result)
         if result['slots'] is not None:
             for slot in result["slots"]:
-                return_result.append([slot["entity"], result["intent"]["probability"]])
+                return_result.append([slot['value']['value'], result["intent"]["probability"]])
             return return_result
         else:
             return return_result

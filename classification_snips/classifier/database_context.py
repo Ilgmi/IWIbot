@@ -41,7 +41,11 @@ class DatabaseContext:
 
     def get_sentences(self):
         doc = self.get_doc('sentences')
-        return list(doc['sentences'])
+        print(doc)
+        if 'sentences' in doc:
+            return list(doc['sentences'])
+        else:
+            return list()
 
     def update_sentences(self, sentences):
         doc = self.get_doc('sentences')

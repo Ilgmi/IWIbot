@@ -279,6 +279,7 @@ def getIntent():
             classification['intent'] = result[0]
         else:
             classification['intent'] = ""
+            get_database_context().add_not_found_sentence(sentence)
     else:
         print("NO DATABASE")
 
@@ -310,7 +311,6 @@ def getEntity():
         # keep
         results = classifier.classifyEntity(sentence)
         # strip keep only name of entity
-        print(results)
         classification = dict()
         if len(results) > 0:
             classification['entity'] = results[0][0]
