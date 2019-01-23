@@ -23,8 +23,6 @@ from flask import Flask, render_template, request, jsonify
 #
 ###
 
-# TODO: Sentences
-# TODO: Ausgabe beim Test
 # TODO: Aufsetzen in Cloud
 
 nltk.download('punkt')
@@ -219,7 +217,6 @@ def get_entity(name):
 @app.route('/api/entity', methods=['GET'])
 def get_entities():
     database_context = get_database_context()
-    print(database_context, file=sys.stderr)
     entities = database_context.get_entities()
     return jsonify(entities)
 
@@ -246,10 +243,12 @@ def get_build_in_entity():
 def get_sentences():
     return jsonify(get_database_context().get_sentences())
 
-@app.route('/api/sentence/<string:sentence>', methods=['PUT'])
-def update_sentences(sentence):
-    if len(sentence) > 0:
-        return jsonify(get_database_context().add_not_found_sentence(sentence)), 200
+@app.route('/api/sentence/', methods=['PUT'])
+def update_sentences():
+    sentence = request.json
+    print(request)
+    if len(sentence) >= 0:
+        return jsonify(get_database_context().update_sentences(sentence)), 200
     return jsonify('NO Content'), 204
 
 

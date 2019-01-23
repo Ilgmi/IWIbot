@@ -39,11 +39,6 @@ class DatabaseContext:
             self.create_doc('sentences', 'sentences', [], 'not_found')
 
         doc = self.get_doc('sentences')
-        # doc['value'] = [sentence]
-        self.update_doc('sentences', 'sentences', [sentence])
-        print(self.get_doc('sentences'))
-        return
-        print(doc)
         if 'value' not in doc:
             doc['value'] = list()
         values = list(doc['value'])
@@ -52,14 +47,16 @@ class DatabaseContext:
 
     def get_sentences(self):
         doc = self.get_doc('sentences')
+        doc.fetch()
         print(doc)
-        if 'sentences' in doc:
-            return list(doc['sentences'])
+        if 'value' in doc:
+            return doc['value']
         else:
             return list()
 
     def update_sentences(self, sentences):
         doc = self.get_doc('sentences')
+        print(sentences)
         self.save_doc(doc, 'sentences', sentences)
         return self.get_sentences()
 

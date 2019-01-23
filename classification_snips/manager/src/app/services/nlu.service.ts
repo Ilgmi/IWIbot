@@ -31,12 +31,12 @@ export class NluService {
     public sentenceService: SentenceService
   ) {}
 
-  public getIntent(s: {sentence: string}) {
-    return this.httpClient.post(this.apiUrl + 'getIntent', s);
+  public getIntent(s: {sentence: string}): Observable<{classifications: {intent: string}}> {
+    return this.httpClient.post<{classifications: {intent: string}}>(this.apiUrl + 'getIntent', s);
   }
 
-  public getEntity(s: {sentence: string}) {
-    return this.httpClient.post(this.apiUrl + 'getEntity', s);
+  public getEntity(s: {sentence: string}): Observable<{classifications: {entity: string}}> {
+    return this.httpClient.post<{classifications: {entity: string}}>(this.apiUrl + 'getEntity', s);
   }
 
   public trainNLU(): Observable<string> {
