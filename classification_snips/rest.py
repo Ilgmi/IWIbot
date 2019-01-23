@@ -72,13 +72,6 @@ elif os.path.isfile('vcap-local.json'):
         service_endpoint_cos = creds_cos['service_endpoint']
         service_instance_id_cos = creds_cos['service_instance_id']
 
-# init client, Classifier
-cache = dict()
-cache["classifier"] = Classifier()
-cache["classifier"].load(DatabaseContext(client), creds_cos)
-# cache classifier
-# cache trainer
-
 
 # On Bluemix, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8000
@@ -93,6 +86,13 @@ def get_cos_context() -> CosContext:
 
 def get_trainer() -> SnipsNluTrainer:
     return SnipsNluTrainer(get_database_context(), get_cos_context())
+
+# init client, Classifier
+cache = dict()
+cache["classifier"] = Classifier()
+cache["classifier"].load(DatabaseContext(client), get_cos_context())
+# cache classifier
+# cache trainer
 
 def removekey(d, key):
     r = dict(d)
@@ -109,7 +109,7 @@ def train_Engine():
     result = get_trainer().start_training()
     if result:
         cache["classifier"] = Classifier()
-        cache["classifier"].load(DatabaseContext(client), creds_cos)
+        cache["classifier"].load(DatabaseContext(client), get_cos_context())
         return jsonify("Success! Engine was trained"), 200
     else:
         return jsonify("Error! Engine wasn't trained.."), 404
