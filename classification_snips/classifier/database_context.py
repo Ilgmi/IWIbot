@@ -34,7 +34,14 @@ class DatabaseContext:
         return Document(self.trainer_db, doc_id)
 
     def add_not_found_sentence(self, sentence):
+        if not self.doc_exist('sentences'):
+            doc = dict([('_id', 'sentences'), ('sentences', list())])
+            self.trainer_db.create_document(doc)
+
         doc = self.get_doc('sentences')
+        print(doc)
+        if 'sentences' not in doc:
+            doc['sentences'] = list()
         values = list(doc['sentences'])
         values.append(sentence)
         self.save_doc(doc, 'sentences', values)
