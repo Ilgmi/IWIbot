@@ -11,6 +11,8 @@ import os
 
 here = path.abspath(path.dirname(__file__))
 
+print('Hello ')
+
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -24,5 +26,4 @@ setup(
     license='Apache-2.0'
 )
 
-os.system("snips-nlu download de")
-os.system("snips-nlu download en")
+

@@ -26,6 +26,8 @@ from flask import Flask, render_template, request, jsonify
 # TODO: Aufsetzen in Cloud
 
 nltk.download('punkt')
+os.system("snips-nlu download de")
+os.system("snips-nlu download en")
 
 # Emit Bluemix deployment event
 cf_deployment_tracker.track()
@@ -46,14 +48,13 @@ if 'VCAP_SERVICES' in os.environ:
         url = 'https://' + creds['host']
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
-        client.create_database('synapse', throw_on_exists=False)
         #Cloud Object Storage
         creds_cos = vcap['cloud-object-storage'][0]['credentials']
         api_key_cos = creds_cos['apikey']
         #:TODO create envir before deploy!!!
-        auth_endpoint_cos = creds_cos['auth_endpoint']
+        auth_endpoint_cos = "https://iam.bluemix.net/oidc/token"
         #:TODO create envir before deploy!!!
-        service_endpoint_cos = creds_cos['service_endpoint']
+        service_endpoint_cos = "https://s3.fra-eu-geo.objectstorage.softlayer.net"
         service_instance_id_cos = creds_cos['resource_instance_id']
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:

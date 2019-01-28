@@ -91,7 +91,9 @@ class CosContext:
             print(bucket.name)
 
     def _bucket_exist(self, name = DEFAULT_BUCKET_NAME):
+        print("Does Bucket ", name, "exist")
         all_buckets = self.cos_res.buckets.all()
+        print(all_buckets)
         for bucket in all_buckets:
             if (bucket.name == name):
                 return True
