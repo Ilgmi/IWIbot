@@ -49,13 +49,12 @@ if 'VCAP_SERVICES' in os.environ:
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         #Cloud Object Storage
+    if 'cloud-object-storage' in vcap:
         creds_cos = vcap['cloud-object-storage'][0]['credentials']
-        api_key_cos = creds_cos['apikey']
-        #:TODO create envir before deploy!!!
-        auth_endpoint_cos = "https://iam.bluemix.net/oidc/token"
-        #:TODO create envir before deploy!!!
-        service_endpoint_cos = "https://s3.fra-eu-geo.objectstorage.softlayer.net"
-        service_instance_id_cos = creds_cos['resource_instance_id']
+        api_key_cos = creds_cos['apikey'] # reads from instance env
+        auth_endpoint_cos = "https://iam.bluemix.net/oidc/token" #hardcode parameter
+        service_endpoint_cos = "https://s3.fra-eu-geo.objectstorage.softlayer.net" #hardcode parameter, !Frankfurt location!
+        service_instance_id_cos = creds_cos['resource_instance_id']  # reads from instance env
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
