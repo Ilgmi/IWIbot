@@ -3,7 +3,7 @@ applications:
  - name: IWIBotSnips
    host: IWIBotSnips
    random-route: false
-   memory: 350M
+   memory: 500M
    services:
      - Cloudant-u5
      - Cloud Object Storage-ez
