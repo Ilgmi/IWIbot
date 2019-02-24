@@ -6,6 +6,8 @@ import {IntentSentence} from '../../../model/intent/intent-sentence';
 import {DataContainer} from '../../../model/data-container';
 import {Entity} from '../../../model/entity/entity';
 import {Observable} from 'rxjs';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmModalComponent} from '../../../modal/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-intent-edit',
@@ -17,7 +19,8 @@ export class IntentEditComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private nluService: NluService) { }
+              private nluService: NluService,
+              private modalService: NgbModal) { }
 
   oldName: string;
   name: string = null;
@@ -113,7 +116,15 @@ export class IntentEditComponent implements OnInit {
   deleteSentence(sentence: IntentSentence) {
     const index = this.intent.utterances.indexOf(sentence);
     if (index > -1) {
-      this.intent.utterances.splice(index, 1);
+
+      const modalRef = this.modalService.open(ConfirmModalComponent);
+      (<ConfirmModalComponent>modalRef.componentInstance).text = 'Wollen Sie den Satz wirklich löschen ?';
+
+      (<Promise<boolean>>modalRef.result).then( (reason) => {
+        this.intent.utterances.splice(index, 1);
+      });
+
+
     }
   }
 }

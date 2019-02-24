@@ -10,23 +10,36 @@ import {HttpErrorResponse} from '@angular/common/http';
 export class TrainingComponent implements OnInit {
   public status: string;
 
+  public showSpinner = false;
+
   constructor(private nluService: NluService) { }
 
   ngOnInit() {
   }
 
   trainNlu(){
+    this.showSpinner = true;
     this.nluService.trainNLU().subscribe( value => {
       console.log(value);
       this.status = value;
+      this.showSpinner = false;
     }, error =>  {
       console.log(error);
       this.status = error.message;
+      this.showSpinner = false;
     });
   }
 
   roleBack(){
-    this.nluService.roleBack();
+    this.nluService.roleBack().subscribe(value => {
+      console.log(value);
+      this.status = value;
+      this.showSpinner = false;
+    }, error =>  {
+      console.log(error);
+      this.status = error.message;
+      this.showSpinner = false;
+    });
   }
 
   setSuccess(s: string){

@@ -8,7 +8,7 @@
     <input #newEntity type="text" class="form-control">
   </div>
   <div class="col">
-    <button class="btn btn-success" (click)="addNewEntity(newEntity.value)">Add</button>
+    <button class="btn btn-success" (click)="addNewEntity(newEntity.value); newEntity.value = ''">Add</button>
   </div>
 </div>
 <div class="row">

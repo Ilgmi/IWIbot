@@ -8,16 +8,18 @@
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row" *ngIf="!intentSpinner">
   <div class="col">
     Intent:
   </div>
   <div class="col">{{intent}}</div>
 </div>
-<div class="row">
+<app-spinner [showSpinner]="intentSpinner"></app-spinner>
+<div class="row" *ngIf="!entitySpinner">
   <div class="col">
     Entity:
   </div>
   <div class="col">{{entity}}</div>
 </div>
+<app-spinner [showSpinner]="entitySpinner"></app-spinner>
 

@@ -4,6 +4,8 @@ import {DataContainer} from '../../../model/data-container';
 import {Entity} from '../../../model/entity/entity';
 import {InformationMessageService} from '../../../services/information-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmModalComponent} from '../../../modal/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-entity-list',
@@ -16,7 +18,7 @@ export class EntityListComponent implements OnInit {
 
   public entities: DataContainer<Entity> = null;
 
-  constructor(private nluService: NluService, private infoMessageService: InformationMessageService) {
+  constructor(private nluService: NluService, private infoMessageService: InformationMessageService, private modalService: NgbModal) {
     this.nluService.entityService.getEntities().subscribe( value => {
       this.entities = value;
     },
@@ -49,11 +51,17 @@ export class EntityListComponent implements OnInit {
   }
 
   deleteEntity(entityKey: string) {
-    if (this.entities.keyExists(entityKey)) {
-      this.nluService.entityService.deleteEntity(entityKey).subscribe(
-        value => this.updateList()
-      );
-    }
+
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    (<ConfirmModalComponent>modalRef.componentInstance).text = 'Wollen Sie den Entity ' + entityKey + ' wirklich löschen ?';
+
+    (<Promise<boolean>>modalRef.result).then( (reason) => {
+      if (this.entities.keyExists(entityKey)) {
+        this.nluService.entityService.deleteEntity(entityKey).subscribe(
+          value => this.updateList()
+        );
+      }
+    });
   }
 
   addNewEntity(name: string) {

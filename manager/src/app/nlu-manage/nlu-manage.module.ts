@@ -13,6 +13,7 @@ import { HomeComponent } from './home/home.component';
 import { ImportComponent } from './import/import/import.component';
 import { TrainingComponent } from './training/training.component';
 import { SentenceComponent } from './sentence/sentence.component';
+import {SpinnerComponent} from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { SentenceComponent } from './sentence/sentence.component';
     HomeComponent,
     ImportComponent,
     TrainingComponent,
-    SentenceComponent
+    SentenceComponent,
+    SpinnerComponent
   ],
   exports: [
     IntentEditComponent,

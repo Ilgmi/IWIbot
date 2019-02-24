@@ -4,6 +4,8 @@ import {DataContainer} from "../../../model/data-container";
 import {Intent} from "../../../model/intent/intent";
 import {InformationMessageService} from '../../../services/information-message.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmModalComponent} from '../../../modal/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-intent-list',
@@ -14,7 +16,7 @@ export class IntentListComponent implements OnInit {
 
   public intents: DataContainer<Intent> = new DataContainer<Intent>();
 
-  constructor(private nluService: NluService, private informationMessageService: InformationMessageService) {
+  constructor(private nluService: NluService, private informationMessageService: InformationMessageService, private modalService: NgbModal) {
 
     this.intents = new DataContainer<Intent>();
     this.nluService.intentService.getIntents().subscribe(
@@ -43,10 +45,15 @@ export class IntentListComponent implements OnInit {
     if(this.intents.keyExists(intentKey)){
       // Modal
 
-      // Soll Gelöscht werden
-      this.nluService.intentService.deleteIntent(intentKey).subscribe(
-        success => this.updateList()
-      );
+      const modalRef = this.modalService.open(ConfirmModalComponent);
+      (<ConfirmModalComponent>modalRef.componentInstance).text = 'Wollen Sie den Intent ' + intentKey + ' wirklich löschen ?';
+
+      (<Promise<boolean>>modalRef.result).then( (reason) => {
+        this.nluService.intentService.deleteIntent(intentKey).subscribe(
+          success => this.updateList()
+        );
+      });
+
     }
   }
 
@@ -57,8 +64,6 @@ export class IntentListComponent implements OnInit {
   }
 
   addNewIntent(value: string) {
-    console.log(value);
-    console.log((this.intents));
     if(!this.intents.keyExists(value)){
       this.nluService.intentService.createIntent(value, new Intent()).subscribe(
         value1 => this.updateList(),

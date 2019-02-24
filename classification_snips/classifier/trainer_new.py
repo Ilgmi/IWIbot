@@ -103,6 +103,7 @@ class SnipsNluTrainer:
             #create new new engine
             self.nlu_engine.persist(ENGINE_PATH_NEW)
             result = self._persist_to_bucket(ENGINE_PATH_NEW, ENGINE_PATH_ZIP, NEW_ENGINE_NAME_ZIP)
+
         if result:
             print("Engine was saved successfully")
         return result
