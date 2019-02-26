@@ -75,7 +75,7 @@ class SnipsNluTrainer:
         return self.nlu_engine
 
     def _load_training_data(self):
-        self.training_data = self.context.get_trainings_data() #TODO: uncomment for deployment
+        self.training_data = self.context.get_trainings_data()
         if self.training_data == "":
             print("There are no training data!")
         else:

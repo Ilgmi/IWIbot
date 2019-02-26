@@ -55,6 +55,9 @@ if 'VCAP_SERVICES' in os.environ:
         auth_endpoint_cos = "https://iam.bluemix.net/oidc/token" #hardcode parameter
         service_endpoint_cos = "https://s3.fra-eu-geo.objectstorage.softlayer.net" #hardcode parameter, !Frankfurt location!
         service_instance_id_cos = creds_cos['resource_instance_id']  # reads from instance env
+        bucket_name = os.getenv('bucket_name') #  User defined env by Cloud Foundry App
+
+
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
@@ -73,6 +76,7 @@ elif os.path.isfile('vcap-local.json'):
         auth_endpoint_cos = creds_cos['auth_endpoint']
         service_endpoint_cos = creds_cos['service_endpoint']
         service_instance_id_cos = creds_cos['service_instance_id']
+        bucket_name = creds_cos['bucket_name']
 
 
 # On Bluemix, get the port number from the environment variable PORT
@@ -84,7 +88,7 @@ def get_database_context() -> DatabaseContext:
     return DatabaseContext(client)
 
 def get_cos_context() -> CosContext:
-    return CosContext(api_key_cos, service_instance_id_cos, auth_endpoint_cos, service_endpoint_cos)
+    return CosContext(api_key_cos, service_instance_id_cos, auth_endpoint_cos, service_endpoint_cos, bucket_name)
 
 def get_trainer() -> SnipsNluTrainer:
     return SnipsNluTrainer(get_database_context(), get_cos_context())
