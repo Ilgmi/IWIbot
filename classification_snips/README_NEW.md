@@ -44,6 +44,32 @@ _upload_file(), download_file(), remove_file(), rename_file(), remove_bucket()_ 
 
 __file_exist_in_bucket(),_ _bucket_exist(), get_buckets()_ - sind die Hilfsfunktionen.
 
+Um den Bucket mit beliebigen zulässigen Namen zu estellen, muss man den Namen in CosContex Konstruktor eingeben. 
++ Für die lokale Nutzung wird der Name von Bucket in der Datei _vcap-local.json_ unter _services:cloud-object-storage:credentials_ als Parameter für **bucket_name** definiert.
++ Für die Nutzung in der Cloud soll zuerst eine Umgebungsvariable **bucket_name** in der App (Cloud Foundry) definiert werden (es geht einfach per IBM Cloud Dashboard ->CF Instanz ->Runtime->Env. variables->nach unten scrollen).
+Der Parameter ist der Name von Bucket. Falls die Namenskonvention verletzt wird, wird ein Exeption ausgeworfen.
+
+#### Snips NLU Trainer
+
+#####Snips NLU (Natural Language Understanding)
+Snips NLU ist eine open-source Offline-Bibliothek für Verständnis natürlicher Sprache von einem französischen Start-up, die keine Cloud-Anbindung braucht.
+Sie basiert sich auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots. Snips NLU hat gute Ergebnisse im Vergleich zu den anderen Cloud-Diensten durch den [Benchmark](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19).
+
+
+Snips NLU besteht sich aus 2 Parser: einen deterministischen und einen probabilistischen. Durch den ersteren werden die dem Trainingsmodell entsprechenden Daten einfach mithilfe _regulärer Ausdrücke_ verarbeitet, der letztere versucht, durch KI (auf der Basis von _Conditional Random Field_(**CRF**)
+ den Auswahl zu treffen. ) **CRF** sind speziell trainiert, um passende Felder für Entitätsauflösung zu erkennen.  Dank der Entitätsauflösung werden am Ende die Parametern ausgewertet.
+Die Parametern werden im Classifier durch Entities  und die Funktionen durch Intents repräsentiert.
+
+#####Implementierung
+
+  
+
+
+
+
+
+
+
 
 
 
