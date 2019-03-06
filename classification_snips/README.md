@@ -42,6 +42,9 @@ In PyCharm kann die **rest.py** auch einfach gestartet und debugged werden.
 
 ## 3. Bereite den Classifier für das Deployment vor
 
+
+## Angular Manager Bauen 
+
 Um in die IBM Cloud zu deployen, ist es wichtig das manifest.yml richtig zu konfigurieren. Der Classifier kommt mit einem bereits vorkonfigurierten Manifest.
 
 Das manifest.yml beinhaltet Basis-Informationen über die zu den Classifier, wie den Namen in der Cloud, wie viel Speicher für pro Instanz alloziert werden soll und die Route. Im aktuellen manifest.yml **random-route: false** generiert den Classifier immer unter der gleichen Route. Sollen mehrere Classifier Instanz deployen werden kann dies in **random-route: true** geändert werden und es wird eine zufällige Route erzeugt die einen Konflikt mit anderen verhindert.  Es ist auch möglich **random-route: false** mit **host: IWIbotChosenHostName**, um einen Hostnamen selbst zu wählen. [Weitere Informationen...](https://console.bluemix.net/docs/manageapps/depapps.html#appmanifest)
@@ -140,7 +143,7 @@ oder starte den Classifier in PyCharm.
 
 5. Mache die Änderungen die du willst und deploye erneut zur IBM Cloud!
   ```
-cf push IWIBotClassifier -b https://github.com/cloudfoundry/buildpack-python.git
+cf push IWIBotSnips -b https://github.com/cloudfoundry/buildpack-python.git
   ```
 
 Schaue die Instanz an unter der gelisteten URL in der Ausgabe des push Befehls, zum Beispiel, *iwibotclassifier.mybluemix.net*.
@@ -157,7 +160,8 @@ Nach dem ersten Start des Classifiers ist die Datenbank noch leer zum Füllen de
 * [Cloudant Client Dokumentation](https://github.com/cloudant/python-cloudant)
 * [Text Classification using Neural Networks](https://machinelearnings.co/text-classification-using-neural-networks-f5cd7b8765c6)
 
-## Aufbau
+## Aufbau 
+## Übersicht Bild
 
 Der Classifier besteht aus drei Komponenten:, Trainer, Classifier und REST-Schnittstelle
 
@@ -168,27 +172,43 @@ Der Classifier besteht aus drei Komponenten:, Trainer, Classifier und REST-Schni
 * **REST:** Ist die Schnittstelle des Classifiers nach außen Anwendungen können die Services die diese Schnittstelle bereitstellt aufrufen. Die Schnittstelle beinhaltet Endpunkte für das erhalten von Intends und Entities als auch Endpunkte zum modifizieren und trainieren von Neuronalen Netzen.
 
 ## REST Schnittstelle
+
+#### Intent und Entity Json
+Der Aufbau der Intent und Entities orientiert sich an der Snips NLU. 
+
+
 Endpunkte:
-* **/api/testIntent** Zum Testen des Classifiers durch die Web-Oberfläche.
 
-* **/api/getIntent** Gibt den Intent eines Satzes zurück. Erwartet ein JSON im Request Body. Dieses JSON muss einen Satz beinhalten unter dem Schlüssel "sentence". Gibt als Response zurück den erhaltenen Request Body ohne den Satz und mit einer Classification, die einen Intent beinhaltet.
+* **POST: /api/getIntent** Gibt den Intent eines Satzes zurück. Erwartet ein JSON im Request Body. Dieses JSON muss einen Satz beinhalten unter dem Schlüssel "sentence". Gibt als Response zurück den erhaltenen Request Body ohne den Satz und mit einer Classification, die einen Intent beinhaltet.
 
-* **/api/getEntity** Gibt eine Entity eines Satzes zurück basierend auf den mitgegebenen vorherigen Intent. Erwartet ein JSON im Request Body. Dieses JSON muss einen Satz beinhalten unter dem Schlüssel "sentence" und einen vorherigen Intent unter dem Pfad "/context/priorIntent/intent". Gibt als Response zurück den erhaltenen Request Body ohne den Satz und mit einer Classification, die eine Entity beinhaltet.
+* **POST: /api/getEntity** Gibt eine Entity eines Satzes zurück basierend auf den mitgegebenen vorherigen Intent. Erwartet ein JSON im Request Body. Dieses JSON muss einen Satz beinhalten unter dem Schlüssel "sentence" und einen vorherigen Intent unter dem Pfad "/context/priorIntent/intent". Gibt als Response zurück den erhaltenen Request Body ohne den Satz und mit einer Classification, die eine Entity beinhaltet.
 
-* **/api/addIntent** Fügt einen Satz mit dem entsprechenden Intent dem Classifier für die Intents hinzu. Erwartet ein JSOn mit dem Schlüssel "sentence" für den hinzuzufügenden Satz und "intent" für den dazu gewollten Intent
+* **GET: /api/trainEngine** Löst das Trainieren der NLU aus.
 
-* **/api/trainIntents** Trainiert den Classifier für die Intents neu.
+* **GET: /api/rollbackEngine** Falls eine vorherige NLU existiert, wird als neue NLU verwedet.
 
-* **/api/addIntent** Fügt einen Satz mit der entsprechenden Entity zum entsprechenden Classifier für die Entities des übergebenen Intents hinzu. Erwartet ein JSOn mit dem Schlüssel "sentence" für den hinzuzufügenden Satz, "entity" für die gewollte Entity und "intent" für den entsprechenden Intent, zu dem diese Entity gehört.
+* **Intent:**  Verwendet die Json Intent Objekte der Snips NLU
 
-* **/api/trainEntity** Trainiert den Classifier für die Entities zu einem Intents neu. Erwartet ein JSON mit dem "intent" für den die Entities neu trainiert werden sollen.
+* **GET: /api/intent/<string:name>** Gibt einen Intent mit dem angegebenen Namen zurück.
+* **POST: /api/intent/<string:name>** Erstellt einen neuen Intent mit dem angegebenen Namen.
+* **PUT: /api/intent/<string:name>**  Aktualisert einen Intent.
+* **DELETE: /api/intent/<string:name>** Löscht einen Intent.
+
+* **GET: /api/entity** Gibt eine Liste von Entities zurück.
+* **GET: /api/entity/<string:name>** Gibt einen Entity zurück.
+* **POST: /api/entity/<string:name>** Erstellt einen Entity.
+* **PUT: /api/entity/<string:name>** Aktualisiert einen Entity.
+* **DELETE: /api/entity/<string:name>** Löscht einen Entity.
+
+* **GET: /api/entity/snips/** Gibt eine Liste von Snips internen Entities zurück.
+* **POST: /api/entity/snips/<string:name>** Erstellt einen Snips Entity.
+* **DELETE: /api/entity/snips/<string:name>** Löscht einen Snips Entity.
+
+* **GET: /api/sentence/** Gibt eine Liste von Sätzen zurück.
+* **PUT: /api/sentence/** Aktualisiert die Liste von Sätzen.
+
 
 
 ##  Ausblick
-Im Rahmen des Projekts wurden auch schon der Grundstein gelegt den Classifier zu erweitern. Folgende Ideen sind Teilweise schon umgesetzt:
 
-Der Classifier kann schon erweitert werden, der nächste logische Schritt wäre eine Strategie zu entwickeln wie Feedback von Nutzern in die Trainings-Daten eingeführt werden kann, dabei kommen 2 möglichkeiten in Frage:
-
-* **Threshold:** Wen ein Nutzer eine Anfrage stellt und das Resultat negativ ist kann der Nutzer eine Antwort geben welches Resultat den Richtig wäre, geben viele Nutzer zu einem Satz das gleiche Endresultat als Feedback kann dieses den Trainings-Daten hinzugefügt werden und der Trainer neu trainiert werden.
-
-* **Trusted Sources:** Bei dieser Variante gibt der Nutzer Nutzer zwar auch Feedback dieses wird aber erst übernommen wenn eine vertraute Person dieses auch verifiziert. Es ist auch möglich einige Nutzer aus vertraut einzustufen und ihr Feedback sofort zu übernehmen. Der Trainer besitzt bereits ein trusted flag beim Hinzufügen von Trainings-Daten, die Logik dafür ist aber noch nicht Implementiert.
+* **Conversation Management:**  Der Nlu Manager könnte durch einen Converstaiton Manager erweitert werden um eigenen Konversationen für den IWIBot zu erstellen. 
