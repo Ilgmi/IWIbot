@@ -11,6 +11,7 @@ Folgende Komponenten werden benötigt:
 * [Cloud Foundry CLI](https://github.com/cloudfoundry/cli#downloads)
 * [Git](https://git-scm.com/downloads)
 * [Python](https://www.python.org/downloads/)
+* [Angular 7.1](https://angular.io/guide/quickstart)
 * [PyCharm](https://www.jetbrains.com/pycharm/) (optional)
 
 ## 1. Clone die IWIbot App
@@ -22,7 +23,16 @@ git clone https://github.com/HSKA-IWI-VSYS/IWIbot
 cd IWIbot/classification
   ```
 
-## 2. Führe den Classifier lokal aus
+## 2. NLU Manager bauen
+Im Ordern ```IWIBot/manager``` finden Sie den NLU Manager. Nachdem Sie Angular installiert haben,
+könen Sie den Manager mit folgenden Befehl bauen: 
+  ```
+npm run build:Cloud Prod
+  ```
+
+Danach ist im Ordner ```IWIBot/classification_snips/static ``` eine lauffähige Angular Anwendung.
+
+## 3. Führe den Classifier lokal aus
 
 Installiere die Abhängigkeiten die in der [requirements.txt](https://pip.readthedocs.io/en/stable/user_guide/#requirements-files) gelistet sind um den Classifier lokal ausführen zu können.
 
@@ -40,10 +50,10 @@ In PyCharm kann die **rest.py** auch einfach gestartet und debugged werden.
 
  Eine Webtest-Oberfläche befindet sich unter: http://localhost:8000
 
-## 3. Bereite den Classifier für das Deployment vor
+## 4. Bereite den Classifier für das Deployment vor
 
 
-## Angular Manager Bauen 
+ 
 
 Um in die IBM Cloud zu deployen, ist es wichtig das manifest.yml richtig zu konfigurieren. Der Classifier kommt mit einem bereits vorkonfigurierten Manifest.
 
@@ -55,7 +65,7 @@ Das manifest.yml beinhaltet Basis-Informationen über die zu den Classifier, wie
    memory: 128M
  ```
 
-## 4. Deployment des Classifier
+## 5. Deployment des Classifier
 
 Es ist möglich den Classifier über die Cloud Foundry CLI zu deployen.
 
@@ -95,7 +105,7 @@ cf apps
   ```
   auszuführen um eine Übersicht über den Status des Classifiers einzusehen und um die URL zu sehen.
 
-## 5. Eine Datenbank hinzufügen
+## 6. Eine Datenbank hinzufügen
 
 Der Classifier benötigt eine NoSQL Datenbank zum persistieren seiner Daten. Aus diesem Grund wird der IBM Cloud ein Service hinzugefügt der diese bereitstellt und es findet die Konfiguration diese Datenbank in der IBM Cloud als auch lokal zu verwenden. 
 
@@ -106,7 +116,7 @@ Der Classifier benötigt eine NoSQL Datenbank zum persistieren seiner Daten. Aus
 
 Umgebungsvariablen ermöglichen es die Deployment Einstellungen vom Quellcode zu separieren, es ist also nicht nötig ein Datenbank Passwort im COde zu setzen, es ist auch mögliche diese Umgebungsvariable im Quellcode zu speichern.
 
-## 6. Benutze die Datenbank lokal
+## 7. Benutze die Datenbank lokal
 
 Um den Classifier lokal auszuführen ist es nötig lokal eine Verbindung mit der Datenbank aufzubauen. Dafür wird eine JSON Datei die die Credentials für den zu benutzenden Datenbank Service speichert. Diese Datei wird NUR verwendet wenn der Classifier lokal ausgeführt wird. Falls es in der IBM Cloud ausgeführt wird, werden die Credentials aus der VCAP_SERVICES Umgebungsvariable gelesen.
 
@@ -148,13 +158,12 @@ cf push IWIBotSnips -b https://github.com/cloudfoundry/buildpack-python.git
 
 Schaue die Instanz an unter der gelisteten URL in der Ausgabe des push Befehls, zum Beispiel, *iwibotclassifier.mybluemix.net*.
 
-## 7. Datenbank füllen
+## 8. Datenbank füllen
 
-Nach dem ersten Start des Classifiers ist die Datenbank noch leer zum Füllen der Datenbank nach dem ersten Start kann in der Web-Schnittstelle der Satz "populate" in das Textfeld eingegeben werden. Der Classifier initialisiert seine Trainer und Classifiers mit vorgegebenen Werten.
+Nach dem ersten Start des Classifiers ist die Datenbank noch leer. Um den Classifier mit Daten zu füllen, können Sie dies über die Oberläche mache, 
+oder sie importieren eine Snips NLU Json Datei. Hierzu können Sie auch das beiligende ```data.json``` verwenden.
 
-**Warnung:** abhängig von der gewählten Strategie der Datenbank ist es der Fall das es beim Füllen der Datenbank zu Fehlern kommt da nicht genügend Datenbank zugriffe pro Sekunde erlaubt sind, daher kann es notwendig sei mehrmals "populate" auszuführen. Die Demo-Seite quittiert nach erfolgreichem Initialisieren mit einem "POPULATED" Resultat.      
-
-## 8. Hilfreiche Links
+## 9. Hilfreiche Links
 
 * [IBM-Cloud Get-Started-Python](https://github.com/IBM-Cloud/get-started-python)
 * [Cloudant Client Dokumentation](https://github.com/cloudant/python-cloudant)
@@ -163,13 +172,17 @@ Nach dem ersten Start des Classifiers ist die Datenbank noch leer zum Füllen de
 ## Aufbau 
 ## Übersicht Bild
 
-Der Classifier besteht aus drei Komponenten:, Trainer, Classifier und REST-Schnittstelle
+Der Classifier besteht aus Fünf Komponenten:, Trainer, Classifier, Datenbank, Cloud-Storage und REST-Schnittstelle
 
-* **Trainer:** Zuständig die verwaltung der Trainings-Daten für ein Neuronalen Netz (NN) und zum Training des NN basierend auf den gegebenen Trainings-Daten. Der Trainer speichert Trainings-Daten und NN in je einem Dokument in einer Datenbank. Das NN kann nach abschließenden Training und speichern vom Classifier aus der Datenbank geladen werden und darauf basierend eine Klassifizierung für einen Text geben. 
+* **Trainer:** Ist für das Trainieren und sichern der Snips NLU zuständig. Verwendet den Cloud-Storage um das Backup in einem Bucket zu sichern.
 
-* **Classifier:** Gibt eine Prognose über den Intend den der Satz beinhaltet basierend auf dem gegebenen NN des Trainers.
+* **Classifier:** Verwendet die Snips NLU um anhand eines Satzen den Intent und den Entity zu berechnen.
 
-* **REST:** Ist die Schnittstelle des Classifiers nach außen Anwendungen können die Services die diese Schnittstelle bereitstellt aufrufen. Die Schnittstelle beinhaltet Endpunkte für das erhalten von Intends und Entities als auch Endpunkte zum modifizieren und trainieren von Neuronalen Netzen.
+* **Datenbank** Speichert die Intents und Entities mit ihren Beispielsätzen. Sichert auch Sätze, welche durch die NLU nicht erkannt wurden. Dadurch sollen neue Daten hinzugefügt werden. 
+
+* **Cloud-Storage** Sichert die Trainierte Snips NLU in einem Bucket. Dazu wird auch der zuvor trainierte NLU gesichert, um gegebenen Falls ein Role Back durchzufüghen.
+
+* **REST:** Ist die Schnittstelle des Classifiers nach außen Anwendungen können die Services die diese Schnittstelle bereitstellt aufrufen. Die Schnittstelle beinhaltet Endpunkte für das erhalten von Intends und Entities als auch Endpunkte zum modifizieren und trainieren der Snips NLU.
 
 ## REST Schnittstelle
 
