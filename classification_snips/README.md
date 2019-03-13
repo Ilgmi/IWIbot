@@ -1,8 +1,9 @@
-# IWIbot Classifier
+# IWIbot Snips
 
-IWIbot Classifier ist ein Text Classification Module, das Neuronale Netzwerke benutzt. Es basiert auf den Algorithmen aus [Text Classification using Neural Networks](https://machinelearnings.co/text-classification-using-neural-networks-f5cd7b8765c6) und ist Teil des IWIbot Projekts der [Hochschule Karlsruhe](https://hs-karlsruhe.de). Das Classification Module wird als eine Python Flask App bereitgestellt und kann auf die IBM Cloud deployed werden.
 
-Dieses Dokument soll dabei helfen die Entwicklungsumgebung für den IWIbot Classifier aufzusetzen und soll hilfreiche Tipps geben für die weitere Entwicklung. 
+IWIbot Sips ist ein Classification Module, welches das Snips NLU verwendet. \
+Snips NLU ist eine open-source Offline-Bibliothek für Verständnis natürlicher Sprache von einem französischen Start-up, die keine Cloud-Anbindung braucht.
+Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots. Snips NLU hat gute Ergebnisse im Vergleich zu den anderen Cloud-Diensten durch einen [Benchmark](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19).
 
 ## Voraussetzungen
 
@@ -13,8 +14,55 @@ Folgende Komponenten werden benötigt:
 * [Python](https://www.python.org/downloads/)
 * [Angular 7.1](https://angular.io/guide/quickstart)
 * [PyCharm](https://www.jetbrains.com/pycharm/) (optional)
+* [IBM Cloud account](https://console.ng.bluemix.net/registration/)
+* [Cloud Object Storage](https://www.ibm.com/de-de/cloud/object-storage)
+* [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python)
+* [Cloudant](https://www.ibm.com/de-de/cloud/cloudant)
+* [Cloud Foundry CLI](https://github.com/cloudfoundry/cli#downloads)
+* [Git](https://git-scm.com/downloads)
+* [Python](https://www.python.org/downloads/)
+* [SnipsNLU](https://snips-nlu.readthedocs.io/)
+* [PyCharm](https://www.jetbrains.com/pycharm/) (optional)
 
-## 1. Clone die IWIbot App
+#### Cloud Object Storage
+**Cloud Object Storage (COS)** ist ein günstiger, skalierbarer Speicher bei IBM, wo fast unbegrenzte Mengen an Daten sicher gespeichert werden können.
+COS unterstützt geografische Skalierung und Verschlüsselung von Daten, die per _HTTP_ mithilfe _REST API_ zugreifbar sind.
+Folgende Lösung wird häufig für die Datenarchivierung und -sicherung, Webanwendungen und mobile Anwendungen  benutzt.
+
+Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS NLU Engine erstellt. Es entsteht die Notwendigkeit, eine Lösung zu finden, den Engine automatisch zu persistieren und die Wiederherstellung auf vorherige Version optional gewährzuleisten, falls neue Lerndaten zur fehlerhaften Ergebnissen führen würden. 
+   
+ **COS** wird für die Speicherung und Wiederherstellung des NLU-Engines benutzt. Für die Implementierung wird ein Fork von boto3 Bibliothek bei AWS - [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python) benutzt, der Amazon S3 ähnliche APIs (kompartibel mit IBM Cloud) unterstützt.
+ #####Voraussetzungen:
++ Eine Instanz von COS in Cloud (**Location: Frankfurt, public**)
++ API key von IBM Cloud Identity und Access Management (Writer permissions)
++ ID von COS
++ Token/Service endpoint
+ #####Verbindungsaufbau
+ Es soll zuerst eine laufende COS Instanz auf IBM Cloud erstellt werden. Es ist wichtig Location: Frankfurt bei der Estellung des Services zu benutzen, andere Einstellungen können default sein.
+ 
+ Für den Verbindungsaufbau werden Credentials laufender Instanz benötigt: 
+ + ibm_api_key_id = api_key (aus Credentials)
+ + ibm_service_instance_id = resource_instance_id (aus Credentials)
+ + ibm_auth_endpoint <-- [IAM token service](https://console.bluemix.net/docs/services/Cloudant/guides/iam.html#ibm-cloud-identity-and-access-management-iam-), Authentifizierung per HTTP 
+ + endpoint_url <-- definiert Region, wo die Buckets erstellt werden. Es ist ganz wichtig zwischen den privaten und public Endpoints zu unterscheiden, da der Zugriff aus Cloud Foundry **nur auf public** Endpoints möglich ist! 
+   + [Die Liste von Regionen und Endpoints(public&private)](https://console.bluemix.net/docs/services/cloud-object-storage/basics/endpoints.html#select-regions-and-endpoints)
+   
+ #####Implementierung 
+Es gibt 2 Clients: high- und low-level APIs(resource und client), um den Object Storage zuzugreifen.
+**_cos_context.py_** ist verantwortlich für die I/O Operationen und Verwaltung von Buckets in COS.
+Die Verwaltung von Buckets ist automatisiert: es wird automatisch geprüft, ob bereits Bucket **"engine"**(default) in COS existiert, falls nein - wird eine neue Instanz erstellt.(d.h. es soll nur die Verbindung zu COS hergestellt werden)
+
+
+_upload_file(), download_file(), remove_file(), rename_file(), remove_bucket()_ - sind die Standartfunktionen, die für hoch-, herunterladen des Engines verantwortlich sind.
+
+__file_exist_in_bucket(),_ _bucket_exist(), get_buckets()_ - sind die Hilfsfunktionen.
+
+Um den Bucket mit beliebigen zulässigen Namen zu estellen, muss man den Namen in CosContex Konstruktor eingeben. 
++ Für die lokale Nutzung wird der Name von Bucket in der Datei _vcap-local.json_ unter _services:cloud-object-storage:credentials_ als Parameter für **bucket_name** definiert.
++ Für die Nutzung in der Cloud soll zuerst eine Umgebungsvariable **bucket_name** in der App (Cloud Foundry) definiert werden (es geht einfach per IBM Cloud Dashboard ->CF Instanz ->Runtime->Env. variables->nach unten scrollen).
+Der Parameter ist der Name von Bucket. Falls die Namenskonvention verletzt wird, wird ein Exeption ausgeworfen.
+
+## Clone die IWIbot App
 
 Clone das IWIBot Repository und gehe in das Verzeichnis in dem sich der IWIBot Classifier befindet.
 
@@ -23,7 +71,7 @@ git clone https://github.com/HSKA-IWI-VSYS/IWIbot
 cd IWIbot/classification
   ```
 
-## 2. NLU Manager bauen
+## NLU Manager bauen
 Im Ordern ```IWIBot/manager``` finden Sie den NLU Manager. Nachdem Sie Angular installiert haben,
 könen Sie den Manager mit folgenden Befehl bauen: 
   ```
@@ -32,7 +80,7 @@ npm run build:Cloud Prod
 
 Danach ist im Ordner ```IWIBot/classification_snips/static ``` eine lauffähige Angular Anwendung.
 
-## 3. Führe den Classifier lokal aus
+##  Führe den Classifier lokal aus
 
 Installiere die Abhängigkeiten die in der [requirements.txt](https://pip.readthedocs.io/en/stable/user_guide/#requirements-files) gelistet sind um den Classifier lokal ausführen zu können.
 
@@ -50,7 +98,7 @@ In PyCharm kann die **rest.py** auch einfach gestartet und debugged werden.
 
  Eine Webtest-Oberfläche befindet sich unter: http://localhost:8000
 
-## 4. Bereite den Classifier für das Deployment vor
+##  Bereite den Classifier für das Deployment vor
 
 
  
@@ -65,7 +113,7 @@ Das manifest.yml beinhaltet Basis-Informationen über die zu den Classifier, wie
    memory: 128M
  ```
 
-## 5. Deployment des Classifier
+##  Deployment des Classifier
 
 Es ist möglich den Classifier über die Cloud Foundry CLI zu deployen.
 
@@ -105,7 +153,7 @@ cf apps
   ```
   auszuführen um eine Übersicht über den Status des Classifiers einzusehen und um die URL zu sehen.
 
-## 6. Eine Datenbank hinzufügen
+##  Eine Datenbank hinzufügen
 
 Der Classifier benötigt eine NoSQL Datenbank zum persistieren seiner Daten. Aus diesem Grund wird der IBM Cloud ein Service hinzugefügt der diese bereitstellt und es findet die Konfiguration diese Datenbank in der IBM Cloud als auch lokal zu verwenden. 
 
@@ -116,7 +164,7 @@ Der Classifier benötigt eine NoSQL Datenbank zum persistieren seiner Daten. Aus
 
 Umgebungsvariablen ermöglichen es die Deployment Einstellungen vom Quellcode zu separieren, es ist also nicht nötig ein Datenbank Passwort im COde zu setzen, es ist auch mögliche diese Umgebungsvariable im Quellcode zu speichern.
 
-## 7. Benutze die Datenbank lokal
+##  Benutze die Datenbank lokal
 
 Um den Classifier lokal auszuführen ist es nötig lokal eine Verbindung mit der Datenbank aufzubauen. Dafür wird eine JSON Datei die die Credentials für den zu benutzenden Datenbank Service speichert. Diese Datei wird NUR verwendet wenn der Classifier lokal ausgeführt wird. Falls es in der IBM Cloud ausgeführt wird, werden die Credentials aus der VCAP_SERVICES Umgebungsvariable gelesen.
 
@@ -158,19 +206,18 @@ cf push IWIBotSnips -b https://github.com/cloudfoundry/buildpack-python.git
 
 Schaue die Instanz an unter der gelisteten URL in der Ausgabe des push Befehls, zum Beispiel, *iwibotclassifier.mybluemix.net*.
 
-## 8. Datenbank füllen
+##  Datenbank füllen
 
 Nach dem ersten Start des Classifiers ist die Datenbank noch leer. Um den Classifier mit Daten zu füllen, können Sie dies über die Oberläche mache, 
 oder sie importieren eine Snips NLU Json Datei. Hierzu können Sie auch das beiligende ```data.json``` verwenden.
 
-## 9. Hilfreiche Links
+## Hilfreiche Links
 
 * [IBM-Cloud Get-Started-Python](https://github.com/IBM-Cloud/get-started-python)
 * [Cloudant Client Dokumentation](https://github.com/cloudant/python-cloudant)
 * [Text Classification using Neural Networks](https://machinelearnings.co/text-classification-using-neural-networks-f5cd7b8765c6)
 
 ## Aufbau 
-## Übersicht Bild
 
 Der Classifier besteht aus Fünf Komponenten:, Trainer, Classifier, Datenbank, Cloud-Storage und REST-Schnittstelle
 
@@ -187,8 +234,7 @@ Der Classifier besteht aus Fünf Komponenten:, Trainer, Classifier, Datenbank, C
 ## REST Schnittstelle
 
 #### Intent und Entity Json
-Der Aufbau der Intent und Entities orientiert sich an der Snips NLU. 
-
+Der Aufbau der Intent und Entities orientiert sich an der [Snips NLU](https://snips-nlu.readthedocs.io/en/latest/data_model.html#).
 
 Endpunkte:
 
