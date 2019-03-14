@@ -110,7 +110,7 @@ Das manifest.yml beinhaltet Basis-Informationen über die zu den Classifier, wie
  applications:
  - name: IWIBotClassifier
    random-route: false
-   memory: 128M
+   memory: 500M
  ```
 
 ##  Deployment des Classifier
@@ -182,6 +182,18 @@ Um den Classifier lokal auszuführen ist es nötig lokal eine Verbindung mit der
           "label": "cloudantNoSQLDB"
         }
       ]
+      "cloud-object-storage": [
+      {
+        "credentials": {
+                "api_key": "API_KEY",
+                "auth_endpoint": "https://iam.bluemix.net/oidc/token",
+                "service_endpoint": "https://s3.fra-eu-geo.objectstorage.softlayer.net",
+                "service_instance_id": "crn:v1:bluemix:public:cloud-object-storage:global:a/66b9b2b8bb9349058d55c1f79568e8ed:0c590b0c-ab5f-4328-8171-9833f4628520::",
+                "bucket_name":"engine"
+            },
+        "label": "cloud-object-storage"
+      }
+    ]
     }
   }
   ```
