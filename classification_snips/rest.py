@@ -53,10 +53,10 @@ if 'VCAP_SERVICES' in os.environ:
         creds_cos = vcap['cloud-object-storage'][0]['credentials']
         api_key_cos = creds_cos['apikey'] # reads from instance env
         auth_endpoint_cos = "https://iam.bluemix.net/oidc/token" #hardcode parameter
-        service_endpoint_cos = "https://s3.fra-eu-geo.objectstorage.softlayer.net" #hardcode parameter, !Frankfurt location!
+        service_endpoint_cos = "https://s3.eu.cloud-object-storage.appdomain.cloud" #hardcode parameter, !Frankfurt location!
         service_instance_id_cos = creds_cos['resource_instance_id']  # reads from instance env
-        bucket_name = os.getenv('bucket_name') #  User defined env by Cloud Foundry App
-
+        # bucket_name = os.getenv('bucket_name') #  User defined env by Cloud Foundry App
+        bucket_name = "myenginebucket"
 
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
@@ -334,93 +334,6 @@ def getEntity():
 
     return jsonify(response_object)
 
-
-# /**
-#  * Endpoint to add a classification to a training set for classifying
-#  * the intent.
-#  *
-#  * @return No response
-#  */
-@app.route('/api/addIntent', methods=['POST'])
-def addIntent():
-    sentence = request.json['sentence']
-    intent = request.json['intent']
-    if client is not None:
-        intents = Trainer("intents", client)
-        intents.add_to_traingset(sentence, intent, True)
-        return jsonify([])
-    else:
-        print("NO DATABASE")
-        return "NO DATABASE"
-
-
-# /**
-#  * Endpoint to train a neural network for classifying an intent.
-#  *
-#  * @return No response
-#  */
-@app.route('/api/trainIntents', methods=['POST'])
-def trainIntents():
-    if client is not None:
-        intents = Trainer("intents", client)
-        intents.start_training()
-        if 'intents' not in cache.keys():
-            cache['intents'] = Classifier('intents', client)
-        else:
-            cache['intents'].load()
-        return jsonify([])
-    else:
-        print("NO DATABASE")
-        return "NO DATABASE"
-
-
-# /**
-#  * Endpoint to add a classification to a training set for classifying
-#  * the entities of an intent.
-#  *
-#  * @return No response
-#  */
-@app.route('/api/addEntity', methods=['POST'])
-def addEntity():
-    intent = request.json['intent']
-    sentence = request.json['sentence']
-    entity = request.json['entity']
-    if client is not None:
-        classifier_name = "entities@" + intent
-        entities = Trainer(classifier_name, client)
-        entities.add_to_traingset(sentence, entity, True)
-        return jsonify([])
-    else:
-        print("NO DATABASE")
-        return "NO DATABASE"
-
-
-# /**
-#  * Endpoint to train a neural network for classifying the entities of an intent.
-#  *
-#  * @return No response
-#  */
-@app.route('/api/trainEntity', methods=['POST'])
-def trainEntity():
-    intent = request.json['intent']
-    if client is not None:
-        classifier_name = "entities@" + intent
-        entities = Trainer(classifier_name, client)
-        entities.start_training()
-        if classifier_name not in cache.keys():
-            cache[classifier_name] = Classifier(classifier_name, client)
-        else:
-            cache[classifier_name].load()
-        return jsonify([])
-    else:
-        print("NO DATABASE")
-        return "NO DATABASE"
-
-
-@atexit.register
-def shutdown():
-    if client is not None:
-        client.disconnect()
 
 
 if __name__ == '__main__':
