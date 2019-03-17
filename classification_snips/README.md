@@ -3,7 +3,7 @@
 
 IWIbot Sips ist ein Classification Module, welches das Snips NLU verwendet. \
 Snips NLU ist eine open-source Offline-Bibliothek für Verständnis natürlicher Sprache von einem französischen Start-up, die keine Cloud-Anbindung braucht.
-Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots.Wie in [Benchmarks](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19) zu sehen liefert Snips im Vergleich zu anderen NLUs sehr gute Ergebnisse.
+Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots. Wie in [Benchmarks](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19) zu sehen liefert Snips im Vergleich zu anderen NLUs sehr gute Ergebnisse.
 
 ## Voraussetzungen
 
