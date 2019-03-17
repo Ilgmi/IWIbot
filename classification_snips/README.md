@@ -27,12 +27,12 @@ Folgende Lösung wird häufig für die Datenarchivierung und -sicherung, Webanwe
 Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS NLU Engine erstellt. Es entsteht die Notwendigkeit, eine Lösung zu finden, die Engine automatisch zu persistieren und die Wiederherstellung auf vorherige Version optional gewährzuleisten, falls neue Lerndaten zur fehlerhaften Ergebnissen führen würden. 
    
  **COS** wird für die Speicherung und Wiederherstellung der NLU-Engines benutzt. Für die Implementierung wird ein Fork von boto3 Bibliothek bei AWS - [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python) benutzt, der Amazon S3 ähnliche APIs (kompartibel mit IBM Cloud) unterstützt.
- #####Voraussetzungen:
+ ##### Voraussetzungen
 + Eine Instanz von COS in Cloud (**Location: Frankfurt oder EU Cross Region Endpoint, public**)
 + API key von IBM Cloud Identity und Access Management (Writer permissions)
 + ID von COS
 + Token/Service endpoint
- #####Verbindungsaufbau
+ ##### Verbindungsaufbau
  Es soll zuerst eine laufende COS Instanz auf IBM Cloud erstellt werden. Es ist wichtig public Location: Frankfurt oder EU Cross Region  bei der Estellung des Services zu benutzen, andere Einstellungen können default sein.
  
  Für den Verbindungsaufbau werden Credentials laufender Instanz benötigt: 
@@ -42,7 +42,7 @@ Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS 
  + endpoint_url <-- definiert Region, wo die Buckets erstellt werden. Es ist ganz wichtig zwischen den privaten und public Endpoints zu unterscheiden, da der Zugriff aus Cloud Foundry **nur auf public** Endpoints möglich ist! 
    + [Die Liste von Regionen und Endpoints(public&private)](https://console.bluemix.net/docs/services/cloud-object-storage/basics/endpoints.html#select-regions-and-endpoints) 
    
- #####Implementierung 
+ ##### Implementierung 
 Es gibt 2 Clients: high- und low-level APIs(resource und client), um den Object Storage zuzugreifen.
 **_cos_context.py_** ist verantwortlich für die I/O Operationen und Verwaltung von Buckets in COS.
 Die Verwaltung von Buckets ist automatisiert: es wird automatisch geprüft, ob bereits Bucket **"engine"**(default) in COS existiert, falls nein - wird eine neue Instanz erstellt.(d.h. es soll nur die Verbindung zu COS hergestellt werden)
