@@ -3,7 +3,7 @@
 
 IWIbot Sips ist ein Classification Module, welches das Snips NLU verwendet. \
 Snips NLU ist eine open-source Offline-Bibliothek für Verständnis natürlicher Sprache von einem französischen Start-up, die keine Cloud-Anbindung braucht.
-Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots. Snips NLU hat gute Ergebnisse im Vergleich zu den anderen Cloud-Diensten durch einen [Benchmark](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19).
+Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots.Wie in [Benchmarks](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19) zu sehen liefert Snips im Vergleich zu anderen NLUs sehr gute Ergebnisse.
 
 ## Voraussetzungen
 
@@ -29,9 +29,9 @@ Folgende Komponenten werden benötigt:
 COS unterstützt geografische Skalierung und Verschlüsselung von Daten, die per _HTTP_ mithilfe _REST API_ zugreifbar sind.
 Folgende Lösung wird häufig für die Datenarchivierung und -sicherung, Webanwendungen und mobile Anwendungen  benutzt.
 
-Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS NLU Engine erstellt. Es entsteht die Notwendigkeit, eine Lösung zu finden, den Engine automatisch zu persistieren und die Wiederherstellung auf vorherige Version optional gewährzuleisten, falls neue Lerndaten zur fehlerhaften Ergebnissen führen würden. 
+Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS NLU Engine erstellt. Es entsteht die Notwendigkeit, eine Lösung zu finden, die Engine automatisch zu persistieren und die Wiederherstellung auf vorherige Version optional gewährzuleisten, falls neue Lerndaten zur fehlerhaften Ergebnissen führen würden. 
    
- **COS** wird für die Speicherung und Wiederherstellung des NLU-Engines benutzt. Für die Implementierung wird ein Fork von boto3 Bibliothek bei AWS - [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python) benutzt, der Amazon S3 ähnliche APIs (kompartibel mit IBM Cloud) unterstützt.
+ **COS** wird für die Speicherung und Wiederherstellung der NLU-Engines benutzt. Für die Implementierung wird ein Fork von boto3 Bibliothek bei AWS - [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python) benutzt, der Amazon S3 ähnliche APIs (kompartibel mit IBM Cloud) unterstützt.
  #####Voraussetzungen:
 + Eine Instanz von COS in Cloud (**Location: Frankfurt, public**)
 + API key von IBM Cloud Identity und Access Management (Writer permissions)
@@ -132,8 +132,7 @@ Ersetze das *API-endpoint* im Befehl mit einem API endpoint aus der folgenden Li
 | https://api.eu-gb.bluemix.net  | United Kingdom |
 | https://api.au-syd.bluemix.net | Sydney         |
 
-
-Loge in deinen IBM Cloud Account
+LogIn in IBM Cloud Account
 
   ```
 cf login
@@ -202,7 +201,7 @@ Um den Classifier lokal auszuführen ist es nötig lokal eine Verbindung mit der
 
 3. Kopiere und ersetze die `username`, `password`, und `host` aus den Credentials in das selbe Feld als in der `vcap-local.json` Datei und ersetze **CLOUDANT_DATABASE_USERNAME**, **CLOUDANT_DATABASE_PASSWORD**, und **CLOUDANT_DATABASE_URL**.
 
-4. Führe den Classifier local aus.
+4. Führe den Classifier lokal aus.
   ```
 python rest.py
   ```
@@ -220,8 +219,8 @@ Schaue die Instanz an unter der gelisteten URL in der Ausgabe des push Befehls, 
 
 ##  Datenbank füllen
 
-Nach dem ersten Start des Classifiers ist die Datenbank noch leer. Um den Classifier mit Daten zu füllen, können Sie dies über die Oberläche mache, 
-oder sie importieren eine Snips NLU Json Datei. Hierzu können Sie auch das beiligende ```data.json``` verwenden.
+Nach dem ersten Start des Classifiers ist die Datenbank noch leer. Der Classifier kann mit Daten gefüllt werden, über die Oberflächer oder durch den Import einer Snips NLU Json Datei. Hierzu können Sie auch das beiligende ```data.json``` verwenden.
+
 
 ## Hilfreiche Links
 
@@ -241,7 +240,7 @@ Der Classifier besteht aus Fünf Komponenten:, Trainer, Classifier, Datenbank, C
 
 * **Cloud-Storage** Sichert die Trainierte Snips NLU in einem Bucket. Dazu wird auch der zuvor trainierte NLU gesichert, um gegebenen Falls ein Role Back durchzufüghen.
 
-* **REST:** Ist die Schnittstelle des Classifiers nach außen Anwendungen können die Services die diese Schnittstelle bereitstellt aufrufen. Die Schnittstelle beinhaltet Endpunkte für das erhalten von Intends und Entities als auch Endpunkte zum modifizieren und trainieren der Snips NLU.
+* **REST:** Ist die Schnittstelle des Classifiers nach außen, Anwendungen können die Services die diese Schnittstelle bereitstellt aufrufen. Die Schnittstelle beinhaltet Endpunkte für das erhalten von Intents und Entities als auch Endpunkte zum modifizieren und trainieren der Snips NLU.
 
 ## REST Schnittstelle
 
