@@ -1,7 +1,7 @@
 # IWIbot Snips
 
 
-IWIbot Sips ist ein Classification Module, welches das Snips NLU verwendet. \
+IWIbot Snips ist ein Classification Module, welches das Snips NLU verwendet. \
 Snips NLU ist eine open-source Offline-Bibliothek für Verständnis natürlicher Sprache von einem französischen Start-up, die keine Cloud-Anbindung braucht.
 Sie basiert auf Algorithmen der künstlichen Intelligenz und bietet sich als gute Lösung für Sprachassistenten oder Chatbots. Wie in [Benchmarks](https://medium.com/snips-ai/benchmarking-natural-language-understanding-systems-google-facebook-microsoft-and-snips-2b8ddcf9fb19) zu sehen liefert Snips im Vergleich zu anderen NLUs sehr gute Ergebnisse.
 
@@ -13,14 +13,9 @@ Folgende Komponenten werden benötigt:
 * [Git](https://git-scm.com/downloads)
 * [Python](https://www.python.org/downloads/)
 * [Angular 7.1](https://angular.io/guide/quickstart)
-* [PyCharm](https://www.jetbrains.com/pycharm/) (optional)
-* [IBM Cloud account](https://console.ng.bluemix.net/registration/)
 * [Cloud Object Storage](https://www.ibm.com/de-de/cloud/object-storage)
 * [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python)
 * [Cloudant](https://www.ibm.com/de-de/cloud/cloudant)
-* [Cloud Foundry CLI](https://github.com/cloudfoundry/cli#downloads)
-* [Git](https://git-scm.com/downloads)
-* [Python](https://www.python.org/downloads/)
 * [SnipsNLU](https://snips-nlu.readthedocs.io/)
 * [PyCharm](https://www.jetbrains.com/pycharm/) (optional)
 
@@ -33,19 +28,19 @@ Während des Trainings mit neuesten Daten werden immer neue Versionen von SNIPS 
    
  **COS** wird für die Speicherung und Wiederherstellung der NLU-Engines benutzt. Für die Implementierung wird ein Fork von boto3 Bibliothek bei AWS - [ibm-cos-sdk-python](https://github.com/IBM/ibm-cos-sdk-python) benutzt, der Amazon S3 ähnliche APIs (kompartibel mit IBM Cloud) unterstützt.
  #####Voraussetzungen:
-+ Eine Instanz von COS in Cloud (**Location: Frankfurt, public**)
++ Eine Instanz von COS in Cloud (**Location: Frankfurt oder EU Cross Region Endpoint, public**)
 + API key von IBM Cloud Identity und Access Management (Writer permissions)
 + ID von COS
 + Token/Service endpoint
  #####Verbindungsaufbau
- Es soll zuerst eine laufende COS Instanz auf IBM Cloud erstellt werden. Es ist wichtig Location: Frankfurt bei der Estellung des Services zu benutzen, andere Einstellungen können default sein.
+ Es soll zuerst eine laufende COS Instanz auf IBM Cloud erstellt werden. Es ist wichtig public Location: Frankfurt oder EU Cross Region  bei der Estellung des Services zu benutzen, andere Einstellungen können default sein.
  
  Für den Verbindungsaufbau werden Credentials laufender Instanz benötigt: 
  + ibm_api_key_id = api_key (aus Credentials)
  + ibm_service_instance_id = resource_instance_id (aus Credentials)
  + ibm_auth_endpoint <-- [IAM token service](https://console.bluemix.net/docs/services/Cloudant/guides/iam.html#ibm-cloud-identity-and-access-management-iam-), Authentifizierung per HTTP 
  + endpoint_url <-- definiert Region, wo die Buckets erstellt werden. Es ist ganz wichtig zwischen den privaten und public Endpoints zu unterscheiden, da der Zugriff aus Cloud Foundry **nur auf public** Endpoints möglich ist! 
-   + [Die Liste von Regionen und Endpoints(public&private)](https://console.bluemix.net/docs/services/cloud-object-storage/basics/endpoints.html#select-regions-and-endpoints)
+   + [Die Liste von Regionen und Endpoints(public&private)](https://console.bluemix.net/docs/services/cloud-object-storage/basics/endpoints.html#select-regions-and-endpoints) 
    
  #####Implementierung 
 Es gibt 2 Clients: high- und low-level APIs(resource und client), um den Object Storage zuzugreifen.
@@ -59,7 +54,7 @@ __file_exist_in_bucket(),_ _bucket_exist(), get_buckets()_ - sind die Hilfsfunkt
 
 Um den Bucket mit beliebigen zulässigen Namen zu estellen, muss man den Namen in CosContex Konstruktor eingeben. 
 + Für die lokale Nutzung wird der Name von Bucket in der Datei _vcap-local.json_ unter _services:cloud-object-storage:credentials_ als Parameter für **bucket_name** definiert.
-+ Für die Nutzung in der Cloud soll zuerst eine Umgebungsvariable **bucket_name** in der App (Cloud Foundry) definiert werden (es geht einfach per IBM Cloud Dashboard ->CF Instanz ->Runtime->Env. variables->nach unten scrollen).
++ Für die Nutzung in der Cloud soll zuerst eine Umgebungsvariable **bucket_name** in der App (Cloud Foundry) definiert werden (es geht einfach per IBM Cloud Dashboard ->CF Instanz ->Runtime->Env. variables->nach unten scrollen oder per IBM CLI).
 Der Parameter ist der Name von Bucket. Falls die Namenskonvention verletzt wird, wird ein Exeption ausgeworfen.
 
 ## Clone die IWIbot App
@@ -221,12 +216,20 @@ Schaue die Instanz an unter der gelisteten URL in der Ausgabe des push Befehls, 
 
 Nach dem ersten Start des Classifiers ist die Datenbank noch leer. Der Classifier kann mit Daten gefüllt werden, über die Oberflächer oder durch den Import einer Snips NLU Json Datei. Hierzu können Sie auch das beiligende ```data.json``` verwenden.
 
+## Logging in IBM Cloud
+
+Es ist sehr hilfreich mithilfe IBM CLI, die Log-Ausgaben des laufenden Services in der Cloud zu analysieren. 
+  ```
+cf logs APP_NAME
+  ```
+Die laufende Instanz kann auch per IBM Dashboard:  Aktive Cloud Foundry-Anwendungen auswählen -> Laufzeit -> SSH zugegriffen werden.
 
 ## Hilfreiche Links
 
 * [IBM-Cloud Get-Started-Python](https://github.com/IBM-Cloud/get-started-python)
 * [Cloudant Client Dokumentation](https://github.com/cloudant/python-cloudant)
 * [Text Classification using Neural Networks](https://machinelearnings.co/text-classification-using-neural-networks-f5cd7b8765c6)
+* [IBM Object Storage Dokumentation](https://cloud.ibm.com/docs/services/cloud-object-storage?topic=cloud-object-storage-getting-started-console-#getting-started-console-)
 
 ## Aufbau 
 
@@ -281,4 +284,4 @@ Endpunkte:
 
 ##  Ausblick
 
-* **Conversation Management:**  Der Nlu Manager könnte durch einen Converstaiton Manager erweitert werden um eigenen Konversationen für den IWIBot zu erstellen. 
+* **Conversation Management:**  Der NLU Manager könnte durch einen Converstaiton Manager erweitert werden um eigenen Konversationen für den IWIBot zu erstellen. 

@@ -53,7 +53,7 @@ if 'VCAP_SERVICES' in os.environ:
         creds_cos = vcap['cloud-object-storage'][0]['credentials']
         api_key_cos = creds_cos['apikey'] # reads from instance env
         auth_endpoint_cos = "https://iam.bluemix.net/oidc/token" #hardcode parameter
-        service_endpoint_cos = "https://s3.eu.cloud-object-storage.appdomain.cloud" #hardcode parameter, !Frankfurt location!
+        service_endpoint_cos = "https://s3.eu.cloud-object-storage.appdomain.cloud" #hardcode parameter, EU Cross Region Endpoints
         service_instance_id_cos = creds_cos['resource_instance_id']  # reads from instance env
         # bucket_name = os.getenv('bucket_name') #  User defined env by Cloud Foundry App
         bucket_name = "myenginebucket"
