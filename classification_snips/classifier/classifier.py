@@ -3,7 +3,7 @@ import os
 import snips_nlu
 from snips_nlu import load_resources, SnipsNLUEngine
 
-from .trainer_new import SnipsNluTrainer
+from .trainer import SnipsNluTrainer
 
 
 

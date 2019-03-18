@@ -9,10 +9,7 @@ import metrics_tracker_client
 # use natural language toolkit
 import nltk
 from classifier.classifier import Classifier
-from classifier.startup import populate_intents, populate_entities_for_meal, populate_entities_for_timetables, \
-    populate_entities_for_navigation
-from classifier.trainer import Trainer #TODO: remove old solution
-from classifier.trainer_new import SnipsNluTrainer
+from classifier.trainer import SnipsNluTrainer
 from classifier.cos_context import CosContext
 from classifier.database_context import DatabaseContext
 from cloudant import Cloudant
@@ -36,7 +33,6 @@ metrics_tracker_client.DSX('org/repo')
 app = Flask(__name__, static_url_path='')
 
 client = None
-db = None
 
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.getenv('VCAP_SERVICES'))
@@ -48,21 +44,20 @@ if 'VCAP_SERVICES' in os.environ:
         url = 'https://' + creds['host']
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
-        #Cloud Object Storage
+        # Cloud Object Storage
     if 'cloud-object-storage' in vcap:
         creds_cos = vcap['cloud-object-storage'][0]['credentials']
-        api_key_cos = creds_cos['apikey'] # reads from instance env
-        auth_endpoint_cos = "https://iam.bluemix.net/oidc/token" #hardcode parameter
-        service_endpoint_cos = "https://s3.eu.cloud-object-storage.appdomain.cloud" #hardcode parameter, EU Cross Region Endpoints
+        api_key_cos = creds_cos['apikey']  # reads from instance env
+        auth_endpoint_cos = "https://iam.bluemix.net/oidc/token"  # hardcode parameter
+        service_endpoint_cos = "https://s3.eu.cloud-object-storage.appdomain.cloud"  # hardcode parameter, EU Cross Region Endpoints
         service_instance_id_cos = creds_cos['resource_instance_id']  # reads from instance env
-        # bucket_name = os.getenv('bucket_name') #  User defined env by Cloud Foundry App
-        bucket_name = "myenginebucket"
+        bucket_name = os.getenv('bucket_name')  # User defined env by Cloud Foundry App
 
 elif os.path.isfile('vcap-local.json'):
     with open('vcap-local.json') as f:
         vcap = json.load(f)
         print('Found local VCAP_SERVICES')
-        #Cloudant
+        # Cloudant
         creds = vcap['services']['cloudantNoSQLDB'][0]['credentials']
         user = creds['username']
         password = creds['password']
@@ -70,14 +65,13 @@ elif os.path.isfile('vcap-local.json'):
         client = Cloudant(user, password, url=url, connect=True)
         client.create_database('trainer', throw_on_exists=False)
         client.create_database('synapse', throw_on_exists=False)
-        #Cloud Object Storage
+        # Cloud Object Storage
         creds_cos = vcap['services']['cloud-object-storage'][0]['credentials']
         api_key_cos = creds_cos['api_key']
         auth_endpoint_cos = creds_cos['auth_endpoint']
         service_endpoint_cos = creds_cos['service_endpoint']
         service_instance_id_cos = creds_cos['service_instance_id']
         bucket_name = creds_cos['bucket_name']
-
 
 # On Bluemix, get the port number from the environment variable PORT
 # When running this app on the local machine, default the port to 8000
@@ -105,6 +99,7 @@ def removekey(d, key):
     del r[key]
     return r
 
+
 @app.route('/')
 def home():
     return app.send_static_file('index.html')
@@ -120,6 +115,7 @@ def train_Engine():
     else:
         return jsonify("Error! Engine wasn't trained.."), 404
 
+
 @app.route('/api/rollbackEngine', methods=['GET'])
 def rollback_Engine():
     result = get_trainer().rollback_nlu()
@@ -127,6 +123,7 @@ def rollback_Engine():
         return jsonify("Success! Engine was restored"), 200
     else:
         return jsonify("Error! Engine rollback is not possible.."), 404
+
 
 @app.route('/api/intent/<string:name>', methods=['GET'])
 def get_intent(name):
@@ -224,6 +221,7 @@ def get_entities():
     entities = database_context.get_entities()
     return jsonify(entities)
 
+
 @app.route('/api/entity/snips/<string:name>', methods=['POST'])
 def add_build_in_entity(name):
     name = "snips/" + name
@@ -240,12 +238,13 @@ def delete_build_in_entity(name):
 @app.route('/api/entity/snips', methods=['GET'])
 def get_build_in_entity():
     return jsonify(['amountOfMoney', 'datetime', 'duration', 'musicAlbum', 'musicArtist', 'musicTrack',
-            'number', 'ordinal', 'percentage', 'temperature'])
+                    'number', 'ordinal', 'percentage', 'temperature'])
 
 
 @app.route('/api/sentence/', methods=['GET'])
 def get_sentences():
     return jsonify(get_database_context().get_sentences())
+
 
 @app.route('/api/sentence/', methods=['PUT'])
 def update_sentences():
@@ -254,7 +253,6 @@ def update_sentences():
     if len(sentence) >= 0:
         return jsonify(get_database_context().update_sentences(sentence)), 200
     return jsonify('NO Content'), 204
-
 
 
 # /**
